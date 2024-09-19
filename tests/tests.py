@@ -217,12 +217,23 @@ class BasicTest(unittest.TestCase):
 
 class AdvancedTest(unittest.TestCase):
 
-    def setUp(self):
-        self.parser = Protocol(file='demo.json')
-
-    def test_report(self):
-        binary = self.parser.encode(DATA, 'report')
-        recv = self.parser.decode(binary, 'report')
+    def test_file(self):
+        protocol = Protocol(file='demo.json')
+        binary = protocol.encode(DATA, 'report')
+        recv = protocol.decode(binary, 'report')
         self.assertEqual(DATA, recv)
+
+    def test_json(self):
+        protocol = Protocol(js={'medida': [
+                {'key': 'id', 'bytes': 1, 'type': 'unsigned'},
+                {'key': 'nombre', 'type': 'string'},
+                {'key': 'valor', 'bytes': 2, 'type': 'signed'}
+            ]})
+        data = {'id': 2, 'nombre': 'Voltaje', 'valor': -20}
+        binary = protocol.encode(data, 'medida')
+        print('binary', binary)
+        recv = protocol.decode(binary, 'medida')
+        print('recv', recv)
+        self.assertEqual(data, recv)
 
 

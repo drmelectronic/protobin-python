@@ -306,9 +306,11 @@ class FieldSigned(FieldBase):
 class FieldString(FieldBase):
 
     def to_binary(self, val):
-        if self.bytes == 0:
-            utf = str(val).encode('utf')[:255]
-            return len(utf).to_bytes(1, 'big') + utf
+        if self.bytes:
+            utf = str(val).encode('utf')[:self.bytes]
+            return utf
+        utf = str(val).encode('utf')[:255]
+        return len(utf).to_bytes(1, 'big') + utf
 
     def from_binary(self, binary):
         if self.bytes == 0:
