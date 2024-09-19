@@ -11,4 +11,4 @@
 Para instalar `protobin-python`, puedes utilizar pip:
 
 ```bash
-pip install protobin-python
+pip install protobin

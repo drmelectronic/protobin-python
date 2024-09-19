@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "protobin"
+version = "0.0.1"
+authors = [
+    { name="Daniel Robles", email="drm.electronic@gmail.com" },
+]
+description = "Python library for encode and decode data in protobin format"
+readme = "README.md"
+license = { file="LICENSE.txt" }
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/drmelectronic/protobin-python"
+"Bug Tracker" = "https://github.com/drmelectronic/protobin-python/issues"

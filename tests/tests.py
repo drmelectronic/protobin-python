@@ -224,3 +224,5 @@ class AdvancedTest(unittest.TestCase):
         binary = self.parser.encode(DATA, 'report')
         recv = self.parser.decode(binary, 'report')
         self.assertEqual(DATA, recv)
+
+
