@@ -1,0 +1,264 @@
+{
+    "fare": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "color", "bytes": 7, "type": "string"},
+        {"key": "orden", "bytes": 1, "type": "unsigned"},
+        {"key": "nombre", "bytes": 13, "type": "string"},
+        {"keys": ["activo", "reintegro"], "bytes": 1, "type": "flags"},
+        {"keys": ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo", "feriado"], "bytes": 1, "type": "flags"},
+        {"key": "ruta", "bytes": 2, "type": "unsigned"},
+        {"key": "tarifa", "bytes": 2, "type": "float", "decimales": 2},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ],
+    "command": [
+        {"key": "comando", "bytes": 1, "type": "char"},
+        {"key": "id", "bytes": 0, "type": "string"},
+        {"key": "value", "bytes": 0, "type": "string"}
+    ],
+    "route_settings": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "nombre", "bytes": 0, "type": "string"},
+        {"key": "ruta", "bytes": 1, "type": "unsigned"},
+        {"key": "tipo", "bytes": 0, "type": "string"},
+        {"key": "data", "bytes": 0, "type": "string"},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ],
+    "forward_datero": [
+        {"key": "geocerca", "bytes": 2, "type": "unsigned"},
+        {"key": "salida", "bytes": 4, "type": "unsigned"},
+        {"key": "hora", "bytes": 6, "type": "datetime"},
+        {"key": "dateros", "bytes": 0, "type": "array", "array": [
+            {"key": "padron", "bytes": 2, "type": "unsigned"},
+            {"key": "delta", "bytes": 1, "type": "unsigned"}
+        ]}
+    ],
+    "backward_datero": [
+        {"key": "geocerca", "bytes": 2, "type": "unsigned"},
+        {"key": "i", "bytes": 1, "type": "unsigned"},
+        {"key": "delta", "bytes": 1, "type": "unsigned"},
+        {"key": "padron", "bytes": 2, "type": "unsigned"},
+        {"key": "id", "bytes": 0, "type": "string"}
+    ],
+    "error": [
+        {"key": "error", "bytes": 0, "type": "string"}
+    ],
+    "geocerca": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "orden", "bytes": 1, "type": "unsigned"},
+        {"key": "longitud", "bytes": 4, "type": "float", "decimales": 6},
+        {"key": "latitud", "bytes": 4, "type": "float", "decimales": 6},
+        {"key": "radio", "bytes": 2, "type": "unsigned"},
+        {"key": "ruta", "bytes": 1, "type": "unsigned"},
+        {"keys": ["lado", "control", "datear", "activo"], "bytes": 1, "type": "flags"},
+        {"key": "nombre", "bytes": 15, "type": "string"},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ],
+    "ask_trip": [
+        {"key": "salida", "bytes": 4, "type": "unsigned"}
+    ],
+    "schedule": [
+        {"key": "salida", "bytes": 4, "type": "unsigned"},
+        {"key": "controles", "bytes": 0, "type": "array", "array": [
+            {"key": "geocerca", "bytes": 2, "type": "unsigned"}
+        ]}
+    ],
+    "ask_schedule": [
+        {"key": "id", "bytes": 4, "type": "unsigned"},
+        {"key": "inicio", "bytes": 6, "type": "datetime"},
+        {"key": "controles", "bytes": 0, "type": "array", "array": [
+            {"key": "geocerca", "bytes": 2, "type": "unsigned"},
+            {"key": "tiempo", "bytes": 1, "type": "signed"},
+            {"key": "volada", "bytes": 1, "type": "signed"}
+        ]}
+    ],
+    "login": [
+        {"key": "serial", "bytes": 0, "type": "string"}
+    ],
+    "new_ip": [
+        {"key": "ip", "bytes": 0, "type": "string"}
+    ],
+    "login_device": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "padron", "bytes": 2, "type": "unsigned"},
+        {"key": "ruta", "bytes": 1, "type": "unsigned"},
+        {"key": "lado", "bytes": 1, "type": "bool"},
+        {"key": "geocerca", "bytes": 2, "type": "unsigned"},
+        {"key": "estado", "bytes": 1, "type": "char"},
+        {"key": "salida", "bytes": 4, "type": "unsigned"},
+        {"key": "conductor", "bytes": 4, "type": "unsigned"},
+        {"key": "orden", "bytes": 1, "type": "unsigned"},
+        {"key": "logueado", "bytes": 1, "type": "bool"},
+        {"key": "data", "bytes": 6, "type": "datetime"},
+        {"key": "programada", "bytes": 2, "type": "time"}
+    ],
+    "start_sales": [
+        {"key": "clave", "bytes": 0, "type": "string"},
+        {"key": "dni", "bytes": 0, "type": "string"},
+        {"key": "lado", "bytes": 1, "type": "bool"},
+        {"key": "ruta", "bytes": 1, "type": "unsigned"},
+        {"key": "unidad", "bytes": 2, "type": "unsigned"}
+    ],
+    "start_sales_response": [
+        {"key": "error", "bytes": 1, "type": "bool"},
+        {"key": "title", "bytes": 0, "type": "string"},
+        {"key": "mensaje", "bytes": 0, "type": "string"},
+        {"key": "sesiones", "bytes": 0, "type": "array", "array": [
+            {"key": "id", "bytes": 4, "type": "unsigned"},
+            {"key": "conductor_id", "bytes": 2, "type": "unsigned"},
+            {"key": "conductor_codigo", "bytes": 0, "type": "string"},
+            {"keys": ["activo", "castigado", "conductor", "vencido"], "bytes": 1, "type": "flags"},
+            {"key": "ruta", "bytes": 1, "type": "unsigned"},
+            {"key": "lado", "bytes": 1, "type": "bool"},
+            {"key": "inicio", "bytes": 6, "type": "datetime"}
+        ]}
+    ],
+    "finalize_sales": [
+        {"key": "sesion", "bytes": 4, "type": "unsigned"},
+        {"key": "unidad", "bytes": 2, "type": "unsigned"},
+        {"key": "fin", "bytes": 6, "type": "datetime"},
+        {"key": "produccion", "bytes": 4, "type": "unsigned"},
+        {"key": "primero", "bytes": 4, "type": "unsigned"},
+        {"key": "ultimo", "bytes": 4, "type": "unsigned"}
+    ],
+    "finalize_sales_response": [
+        {"key": "error", "bytes": 1, "type": "bool"},
+        {"key": "title", "bytes": 0, "type": "string"},
+        {"key": "mensaje", "bytes": 0, "type": "string"},
+        {"key": "id", "bytes": 4, "type": "unsigned"}
+    ],
+    "message": [
+        {"key": "id", "bytes": 4, "type": "unsigned"},
+        {"key": "texto", "bytes": 0, "type": "string"}
+    ],
+    "message_response": [
+        {"key": "id", "bytes": 4, "type": "unsigned"},
+        {"key": "read", "bytes": 1, "type": "bool"}
+    ],
+    "operation": [
+        {"key": "id", "bytes": 0, "type": "string"},
+        {"key": "section", "bytes": 0, "type": "string"},
+        {"key": "key", "bytes": 0, "type": "string"},
+        {"key": "value", "bytes": 0, "type": "string"}
+    ],
+    "operation_response": [
+        {"key": "id", "bytes": 0, "type": "string"}
+    ],
+    "busstop": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "orden", "bytes": 1, "type": "unsigned"},
+        {"key": "longitud", "bytes": 4, "type": "float", "decimales": 6},
+        {"key": "latitud", "bytes": 4, "type": "float", "decimales": 6},
+        {"key": "radio", "bytes": 2, "type": "unsigned"},
+        {"key": "ruta", "bytes": 1, "type": "unsigned"},
+        {"keys": ["liquidar", "lado", "terminal", "activo"], "bytes": 1, "type": "flags"},
+        {"key": "nombre", "bytes": 14, "type": "string"},
+        {"key": "velocidad", "bytes": 1, "type": "unsigned"},
+        {"key": "tarifas", "bytes": 0, "type": "array", "array": [
+            {"key": "boleto", "bytes": 2, "type": "unsigned"},
+            {"key": "fin", "bytes": 2, "type": "unsigned"}
+        ]},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ],
+    "parameter": [
+        {"key": "id", "bytes": 0, "type": "string"},
+        {"key": "nombre", "bytes": 0, "type": "string"},
+        {"key": "valor", "bytes": 0, "type": "string"}
+    ],
+    "report": [
+        {"key": "positions", "bytes": 19, "type": "array", "array": [
+            {"key": "time", "bytes": 6, "type": "datetime"},
+            {"key": "lng", "bytes": 4, "type": "float", "decimales": 6},
+            {"key": "lat", "bytes": 4, "type": "float", "decimales": 6},
+            {"key": "speed", "bytes": 1, "type": "unsigned"},
+            {"key": "mark", "bytes": 2, "type": "unsigned"},
+            {"key": "busstop", "bytes": 2, "type": "unsigned"}
+        ]},
+        {"key": "trip", "bytes": 4, "type": "unsigned"},
+        {"key": "route", "bytes": 1, "type": "unsigned"},
+        {"key": "direction", "bytes": 1, "type": "bool"},
+        {"key": "state", "bytes": 1, "type": "char"},
+        {"key": "sales", "bytes": 3, "type": "unsigned"},
+        {"key": "events", "bytes": 3, "type": "array", "array": [
+            {"key": "id", "bytes": 2, "type": "unsigned"},
+            {"key": "value", "bytes": 1, "type": "unsigned"}
+        ]}
+    ],
+    "position_response": [
+        {"key": "reportes", "bytes": 1, "type": "unsigned"},
+        {"key": "ids", "bytes": 0, "type": "array", "array": [
+            {"key": "id", "bytes": 2, "type": "unsigned"}
+        ]}
+    ],
+    "route": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "codigo", "bytes": 0, "type": "string"},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ],
+    "trip": [
+        {"key": "id", "bytes": 4, "type": "unsigned"},
+        {"key": "ruta", "bytes": 1, "type": "unsigned"},
+        {"key": "lado", "bytes": 1, "type": "bool"},
+        {"key": "inicio", "bytes": 6, "type": "datetime"},
+        {"key": "estado", "bytes": 1, "type": "char"},
+        {"key": "frecuencia", "bytes": 1, "type": "unsigned"},
+        {"key": "conductor", "bytes": 4, "type": "unsigned"},
+        {"key": "geocerca", "bytes": 2, "type": "unsigned"},
+        {"key": "controles", "bytes": 0, "type": "array", "array": [
+            {"key": "geocerca", "bytes": 2, "type": "unsigned"},
+            {"key": "tiempo", "bytes": 1, "type": "signed"},
+            {"key": "volada", "bytes": 1, "type": "signed"}
+        ]},
+        {"key": "marcados", "bytes": 0, "type": "bits"}
+    ],
+    "settings": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "nombre", "bytes": 0, "type": "string"},
+        {"key": "tipo", "bytes": 0, "type": "string"},
+        {"key": "data", "bytes": 0, "type": "string"},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ],
+    "tickets": [
+        {"key": "tickets", "bytes": 0, "type": "array", "array": [
+            {"key": "boleto", "bytes": 2, "type": "unsigned"},
+            {"key": "conductor", "bytes": 2, "type": "unsigned"},
+            {"key": "correlativo", "bytes": 4, "type": "unsigned"},
+            {"key": "dia", "bytes": 3, "type": "date"},
+            {"key": "fin", "bytes": 2, "type": "unsigned"},
+            {"key": "hora", "bytes": 6, "type": "datetime"},
+            {"key": "inicio", "bytes": 4, "type": "unsigned"},
+            {"key": "inspector", "bytes": 2, "type": "unsigned"},
+            {"key": "medio_pago", "bytes": 1, "type": "unsigned"},
+            {"key": "numero", "bytes": 4, "type": "unsigned"},
+            {"key": "precio", "bytes": 2, "type": "unsigned"},
+            {"key": "ruta", "bytes": 1, "type": "unsigned"},
+            {"key": "sesion", "bytes": 4, "type": "unsigned"},
+            {"key": "unidad", "bytes": 2, "type": "unsigned"},
+            {"key": "tarjeta", "bytes": 0, "type": "string"}
+        ]}
+    ],
+    "tickets_response": [
+        {"key": "tickets", "bytes": 0, "type": "array", "array": [
+            {"key": "correlativo", "bytes": 4, "type": "unsigned"},
+            {"key": "id", "bytes": 0, "type": "string"}
+        ]}
+    ],
+    "timestamp": [
+        {"key": "timestamp", "bytes": 6, "type": "timestamp"}
+    ],
+    "timestamp_us": [
+        {"key": "timestamp", "bytes": 8, "type": "timestamp"}
+    ],
+    "remaining_data": [
+        {"key": "faltantes", "bytes": 4, "type": "unsigned"},
+        {"key": "tabla", "bytes": 1, "type": "char"}
+    ],
+    "user_route": [
+        {"key": "id", "bytes": 2, "type": "unsigned"},
+        {"key": "celular", "bytes": 9, "type": "string"},
+        {"key": "nombre", "bytes": 14, "type": "string"},
+        {"key": "rutas", "bytes": 1, "type": "array", "array": [
+            {"key": "ruta", "bytes": 1, "type": "unsigned"}
+        ]},
+        {"key": "timestamp", "bytes": 6, "type": "datetime"}
+    ]
+}
