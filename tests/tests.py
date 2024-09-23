@@ -139,23 +139,30 @@ class BasicTest(unittest.TestCase):
         binary = self.protocol.encode(data, 'array')
         recv = self.protocol.decode(binary, 'array')
         self.assertEqual(data, recv)
+        data = {'test': [
+            {'test': 'texto2 de prueba'},
+            {'test': 'segunda prueba4'},
+            {'test': 'otra más3'},
+            {'test': 'y una última'}]
+        }
+        binary = self.protocol.encode(data, 'array')
+        recv = self.protocol.decode(binary, 'array')
+        self.assertEqual(data, recv)
 
     def test_bits(self):
         data = {'test': [True, False, True, False, False] * 3}
-        print('data', data)
         binary = self.protocol.encode(data, 'bits')
-        print('binary', binary)
         recv = self.protocol.decode(binary, 'bits')
-        print('recv', recv)
+        self.assertEqual(data, recv)
+        data = {'test': [True, False, True, False, False] * 5}
+        binary = self.protocol.encode(data, 'bits')
+        recv = self.protocol.decode(binary, 'bits')
         self.assertEqual(data, recv)
 
     def test_bits_fixed(self):
         data = {'test': [True, False, True, False, False, True, True]}
-        print('data', data)
         binary = self.protocol.encode(data, 'bits_fixed')
-        print('binary', binary)
         recv = self.protocol.decode(binary, 'bits_fixed')
-        print('recv', recv)
         self.assertEqual(data, recv)
 
     def test_bool(self):
@@ -245,9 +252,11 @@ class AdvancedTest(unittest.TestCase):
             ]})
         data = {'id': 2, 'nombre': 'Voltaje', 'valor': -20}
         binary = protocol.encode(data, 'medida')
-        print('binary', binary)
         recv = protocol.decode(binary, 'medida')
-        print('recv', recv)
+        self.assertEqual(data, recv)
+        data = {'id': 4, 'nombre': 'Corriente', 'valor': 240}
+        binary = protocol.encode(data, 'medida')
+        recv = protocol.decode(binary, 'medida')
         self.assertEqual(data, recv)
 
 
