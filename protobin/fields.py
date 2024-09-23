@@ -281,18 +281,18 @@ class FieldFloat(FieldBase):
 
     def __init__(self, js):
         super().__init__(js)
-        self.decimales = js['decimales']
+        self.decimals = js['decimals']
 
     def from_binary(self, binary):
         val = int.from_bytes(binary[:self.bytes], 'big', signed=True)
-        return val / (10 ** self.decimales)
+        return val / (10 ** self.decimals)
 
     def to_binary(self, val):
-        return int(round(val * (10 ** self.decimales))).to_bytes(self.bytes, 'big', signed=True)
+        return int(round(val * (10 ** self.decimals))).to_bytes(self.bytes, 'big', signed=True)
 
     def to_dict(self):
         d = super().to_dict()
-        d['decimales'] = self.decimales
+        d['decimals'] = self.decimals
         return d
 
 

@@ -7,7 +7,7 @@
         {"keys": ["activo", "reintegro"], "bytes": 1, "type": "flags"},
         {"keys": ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo", "feriado"], "bytes": 1, "type": "flags"},
         {"key": "ruta", "bytes": 2, "type": "unsigned"},
-        {"key": "tarifa", "bytes": 2, "type": "float", "decimales": 2},
+        {"key": "tarifa", "bytes": 2, "type": "float", "decimals": 2},
         {"key": "timestamp", "bytes": 6, "type": "datetime"}
     ],
     "command": [
@@ -45,8 +45,8 @@
     "geocerca": [
         {"key": "id", "bytes": 2, "type": "unsigned"},
         {"key": "orden", "bytes": 1, "type": "unsigned"},
-        {"key": "longitud", "bytes": 4, "type": "float", "decimales": 6},
-        {"key": "latitud", "bytes": 4, "type": "float", "decimales": 6},
+        {"key": "longitud", "bytes": 4, "type": "float", "decimals": 6},
+        {"key": "latitud", "bytes": 4, "type": "float", "decimals": 6},
         {"key": "radio", "bytes": 2, "type": "unsigned"},
         {"key": "ruta", "bytes": 1, "type": "unsigned"},
         {"keys": ["lado", "control", "datear", "activo"], "bytes": 1, "type": "flags"},
@@ -146,8 +146,8 @@
     "busstop": [
         {"key": "id", "bytes": 2, "type": "unsigned"},
         {"key": "orden", "bytes": 1, "type": "unsigned"},
-        {"key": "longitud", "bytes": 4, "type": "float", "decimales": 6},
-        {"key": "latitud", "bytes": 4, "type": "float", "decimales": 6},
+        {"key": "longitud", "bytes": 4, "type": "float", "decimals": 6},
+        {"key": "latitud", "bytes": 4, "type": "float", "decimals": 6},
         {"key": "radio", "bytes": 2, "type": "unsigned"},
         {"key": "ruta", "bytes": 1, "type": "unsigned"},
         {"keys": ["liquidar", "lado", "terminal", "activo"], "bytes": 1, "type": "flags"},
@@ -167,8 +167,8 @@
     "report": [
         {"key": "positions", "bytes": 19, "type": "array", "array": [
             {"key": "time", "bytes": 6, "type": "datetime"},
-            {"key": "lng", "bytes": 4, "type": "float", "decimales": 6},
-            {"key": "lat", "bytes": 4, "type": "float", "decimales": 6},
+            {"key": "lng", "bytes": 4, "type": "float", "decimals": 6},
+            {"key": "lat", "bytes": 4, "type": "float", "decimals": 6},
             {"key": "speed", "bytes": 1, "type": "unsigned"},
             {"key": "mark", "bytes": 2, "type": "unsigned"},
             {"key": "busstop", "bytes": 2, "type": "unsigned"}
