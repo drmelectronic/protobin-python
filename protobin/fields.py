@@ -75,8 +75,7 @@ class FieldBase:
     def split(self, binary):
         if self.bytes:
             return binary[:self.bytes], binary[self.bytes:]
-        self.bytes = binary[0]
-        return binary[1:self.bytes + 1], binary[self.bytes + 1:]
+        return binary[1:binary[0] + 1], binary[binary[0] + 1:]
 
     def to_dict(self):
         return {
@@ -134,11 +133,18 @@ class FieldBits(FieldBase):
         self.length = js.get('length', 0)
         self.bytes = math.ceil(self.length / 8)
 
+    def decode(self, binary):
+        self.ensure_length(binary)
+        a, b, length = self.split(binary)
+        val = self.from_binary_bits(a, length)
+        return val, b
+
     def split(self, binary):
-        if not self.length:
-            self.length = binary[0]
-            self.bytes = math.ceil(self.length / 8)
-        return binary[1:self.bytes + 1], binary[self.bytes + 1:]
+        if self.length:
+            return binary[:self.bytes], binary[self.bytes:], self.length
+        length = binary[0]
+        bts = math.ceil(length / 8)
+        return binary[1:bts + 1], binary[bts + 1:], length
 
     def to_binary(self, val: List[bool]):
         if len(val) == 0:
@@ -150,18 +156,19 @@ class FieldBits(FieldBase):
             bits = ''
         for b in val:
             bits += '1' if b else '0'
-        length = int(len(bits) / 8)
-        binary += len(val).to_bytes(1, 'big', signed=False)
-        binary += int(bits, 2).to_bytes(length, 'big', signed=False)
+        bts = int(len(bits) / 8)
+        if not self.length:
+            binary += len(val).to_bytes(1, 'big', signed=False)
+        binary += int(bits, 2).to_bytes(bts, 'big', signed=False)
         return binary
 
-    def from_binary(self, binary):
+    def from_binary_bits(self, binary, length):
         numero = int.from_bytes(binary, 'big', signed=False)
         bits = bin(numero)[2:]
         val = [False] * 8
         for b in bits:
             val.append(b == '1')
-        val = val[-self.length:]
+        val = val[-length:]
         return val
 
 
@@ -313,10 +320,7 @@ class FieldString(FieldBase):
         return len(utf).to_bytes(1, 'big') + utf
 
     def from_binary(self, binary):
-        if self.bytes == 0:
-            self.bytes = int.from_bytes(binary[:1], 'big', signed=False)
-            binary = binary[1:]
-        return binary[:self.bytes].decode('utf')
+        return binary.decode('utf')
 
 
 class FieldTime(FieldBase):

@@ -116,6 +116,7 @@ class BasicTest(unittest.TestCase):
                 {'key': 'test', 'bytes': 0, 'type': 'string'}
             ]}],
             'bits': [{'key': 'test', 'type': 'bits'}],
+            'bits_fixed': [{'key': 'test', 'type': 'bits', 'length': 7}],
             'bool': [{'key': 'test', 'bytes': 1, 'type': 'bool'}],
             'char': [{'key': 'test', 'bytes': 1, 'type': 'char'}],
             'date': [{'key': 'test', 'bytes': 1, 'type': 'date'}],
@@ -145,6 +146,15 @@ class BasicTest(unittest.TestCase):
         binary = self.protocol.encode(data, 'bits')
         print('binary', binary)
         recv = self.protocol.decode(binary, 'bits')
+        print('recv', recv)
+        self.assertEqual(data, recv)
+
+    def test_bits_fixed(self):
+        data = {'test': [True, False, True, False, False, True, True]}
+        print('data', data)
+        binary = self.protocol.encode(data, 'bits_fixed')
+        print('binary', binary)
+        recv = self.protocol.decode(binary, 'bits_fixed')
         print('recv', recv)
         self.assertEqual(data, recv)
 
@@ -204,6 +214,10 @@ class BasicTest(unittest.TestCase):
 
     def test_string(self):
         data = {'test': 'texto de prueba'}
+        binary = self.protocol.encode(data, 'string')
+        recv = self.protocol.decode(binary, 'string')
+        self.assertEqual(data, recv)
+        data = {'test': 'otro texto de prueba más largo'}
         binary = self.protocol.encode(data, 'string')
         recv = self.protocol.decode(binary, 'string')
         self.assertEqual(data, recv)
