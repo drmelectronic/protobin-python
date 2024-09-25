@@ -1,7 +1,8 @@
 import unittest
 
 import datetime
-
+import json
+import yaml
 from protobin import Protocol
 
 DATA = {
@@ -238,8 +239,14 @@ class BasicTest(unittest.TestCase):
 
 class AdvancedTest(unittest.TestCase):
 
-    def test_file(self):
+    def test_file_json(self):
         protocol = Protocol(file='demo.json')
+        binary = protocol.encode(DATA, 'report')
+        recv = protocol.decode(binary, 'report')
+        self.assertEqual(DATA, recv)
+
+    def test_file_yaml(self):
+        protocol = Protocol(file='demo.yaml')
         binary = protocol.encode(DATA, 'report')
         recv = protocol.decode(binary, 'report')
         self.assertEqual(DATA, recv)
@@ -259,4 +266,61 @@ class AdvancedTest(unittest.TestCase):
         recv = protocol.decode(binary, 'medida')
         self.assertEqual(data, recv)
 
+    def test_new_yaml(self):
+        ym = yaml.full_load("""report:
+  positions:
+    bytes: 19
+    type: array
+    array:
+      time:
+        bytes: 6
+        type: datetime
+      lng:
+        bytes: 4
+        decimals: 6
+        type: float
+      lat:
+        bytes: 4
+        decimals: 6
+        type: float
+      speed:
+        bytes: 1
+        type: unsigned
+      mark:
+        bytes: 2
+        type: unsigned
+      busstop:
+        bytes: 2
+        type: unsigned
+  trip:
+    bytes: 4
+    type: unsigned
+  route:
+    bytes: 1
+    type: unsigned
+  direction:
+    bytes: 1
+    type: bool
+  state:
+    bytes: 1
+    type: char
+  sales:
+    bytes: 3
+    type: unsigned
+  events:
+    bytes: 3
+    type: array
+    array:
+      id:
+        bytes: 2
+        type: unsigned
+      value:
+        bytes: 1
+        type: unsigned
+""")
+        js = json.dumps(ym, indent=2)
+        print(js)
+
+    def test_convert_json_to_yaml(self):
+        protocol = Protocol(file='demo.json')
 

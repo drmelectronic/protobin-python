@@ -1,4 +1,8 @@
 {
+    "ask_schedule1": {
+        "id": [{"bytes": 4, "type": "unsigned"}],
+        "inicio": [{"bytes": 6, "type": "datetime"}]},
+
     "fare": [
         {"key": "id", "bytes": 2, "type": "unsigned"},
         {"key": "color", "bytes": 7, "type": "string"},
@@ -183,6 +187,29 @@
             {"key": "value", "bytes": 1, "type": "unsigned"}
         ]}
     ],
+    "report": {
+        "positions": {"bytes": 19,"type": "array",
+          "array": {
+            "time": {"bytes": 6,"type": "datetime"},
+            "lng": {"bytes": 4,"decimals": 6,"type": "float"},
+            "lat": {"bytes": 4,"decimals": 6,"type": "float"},
+            "speed": {"bytes": 1,"type": "unsigned"},
+            "mark": {"bytes": 2,"type": "unsigned"},
+            "busstop": {"bytes": 2,"type": "unsigned"}
+          }
+        },
+        "trip": {"bytes": 4,"type": "unsigned"},
+        "route": {"bytes": 1,"type": "unsigned"},
+        "direction": {"bytes": 1,"type": "bool"},
+        "state": {"bytes": 1,"type": "char"},
+        "sales": {"bytes": 3,"type": "unsigned"},
+        "events": {"bytes": 3,"type": "array",
+            "array": {
+                "id": {"bytes": 2,"type": "unsigned"},
+                "value": {"bytes": 1,"type": "unsigned"}
+          }
+        }
+    },
     "position_response": [
         {"key": "reportes", "bytes": 1, "type": "unsigned"},
         {"key": "ids", "bytes": 0, "type": "array", "array": [

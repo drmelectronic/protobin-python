@@ -1,0 +1,622 @@
+report:
+  positions:
+    bytes: 19
+    type: array
+    array:
+      time:
+        bytes: 6
+        type: datetime
+      lng:
+        bytes: 4
+        decimals: 6
+        type: float
+      lat:
+        bytes: 4
+        decimals: 6
+        type: float
+      speed:
+        bytes: 1
+        type: unsigned
+      mark:
+        bytes: 2
+        type: unsigned
+      busstop:
+        bytes: 2
+        type: unsigned
+  trip:
+    bytes: 4
+    type: unsigned
+  route:
+    bytes: 1
+    type: unsigned
+  direction:
+    bytes: 1
+    type: bool
+  state:
+    bytes: 1
+    type: char
+  sales:
+    bytes: 3
+    type: unsigned
+  events:
+    bytes: 3
+    type: array
+    array:
+      id:
+        bytes: 2
+        type: unsigned
+      value:
+        bytes: 1
+        type: unsigned
+
+ask_schedule:
+  id:
+    bytes: 4
+    type: unsigned
+  inicio:
+    bytes: 6
+    type: datetime
+  controles:
+    type: array
+    array:
+      geocerca:
+        bytes: 2
+        type: unsigned
+      tiempo:
+        bytes: 1
+        type: signed
+      volada:
+        bytes: 1
+        type: signed
+
+ask_trip:
+- bytes: 4
+  key: salida
+  type: unsigned
+backward_datero:
+- bytes: 2
+  key: geocerca
+  type: unsigned
+- bytes: 1
+  key: i
+  type: unsigned
+- bytes: 1
+  key: delta
+  type: unsigned
+- bytes: 2
+  key: padron
+  type: unsigned
+- bytes: 0
+  key: id
+  type: string
+busstop:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 1
+  key: orden
+  type: unsigned
+- bytes: 4
+  decimals: 6
+  key: longitud
+  type: float
+- bytes: 4
+  decimals: 6
+  key: latitud
+  type: float
+- bytes: 2
+  key: radio
+  type: unsigned
+- bytes: 1
+  key: ruta
+  type: unsigned
+- bytes: 1
+  keys:
+  - liquidar
+  - lado
+  - terminal
+  - activo
+  type: flags
+- bytes: 14
+  key: nombre
+  type: string
+- bytes: 1
+  key: velocidad
+  type: unsigned
+- array:
+  - bytes: 2
+    key: boleto
+    type: unsigned
+  - bytes: 2
+    key: fin
+    type: unsigned
+  bytes: 0
+  key: tarifas
+  type: array
+- bytes: 6
+  key: timestamp
+  type: datetime
+command:
+- bytes: 1
+  key: comando
+  type: char
+- bytes: 0
+  key: id
+  type: string
+- bytes: 0
+  key: value
+  type: string
+error:
+- bytes: 0
+  key: error
+  type: string
+fare:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 7
+  key: color
+  type: string
+- bytes: 1
+  key: orden
+  type: unsigned
+- bytes: 13
+  key: nombre
+  type: string
+- bytes: 1
+  keys:
+  - activo
+  - reintegro
+  type: flags
+- bytes: 1
+  keys:
+  - lunes
+  - martes
+  - miercoles
+  - jueves
+  - viernes
+  - sabado
+  - domingo
+  - feriado
+  type: flags
+- bytes: 2
+  key: ruta
+  type: unsigned
+- bytes: 2
+  decimals: 2
+  key: tarifa
+  type: float
+- bytes: 6
+  key: timestamp
+  type: datetime
+finalize_sales:
+- bytes: 4
+  key: sesion
+  type: unsigned
+- bytes: 2
+  key: unidad
+  type: unsigned
+- bytes: 6
+  key: fin
+  type: datetime
+- bytes: 4
+  key: produccion
+  type: unsigned
+- bytes: 4
+  key: primero
+  type: unsigned
+- bytes: 4
+  key: ultimo
+  type: unsigned
+finalize_sales_response:
+- bytes: 1
+  key: error
+  type: bool
+- bytes: 0
+  key: title
+  type: string
+- bytes: 0
+  key: mensaje
+  type: string
+- bytes: 4
+  key: id
+  type: unsigned
+forward_datero:
+- bytes: 2
+  key: geocerca
+  type: unsigned
+- bytes: 4
+  key: salida
+  type: unsigned
+- bytes: 6
+  key: hora
+  type: datetime
+- array:
+  - bytes: 2
+    key: padron
+    type: unsigned
+  - bytes: 1
+    key: delta
+    type: unsigned
+  bytes: 0
+  key: dateros
+  type: array
+geocerca:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 1
+  key: orden
+  type: unsigned
+- bytes: 4
+  decimals: 6
+  key: longitud
+  type: float
+- bytes: 4
+  decimals: 6
+  key: latitud
+  type: float
+- bytes: 2
+  key: radio
+  type: unsigned
+- bytes: 1
+  key: ruta
+  type: unsigned
+- bytes: 1
+  keys:
+  - lado
+  - control
+  - datear
+  - activo
+  type: flags
+- bytes: 15
+  key: nombre
+  type: string
+- bytes: 6
+  key: timestamp
+  type: datetime
+login:
+- bytes: 0
+  key: serial
+  type: string
+login_device:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 2
+  key: padron
+  type: unsigned
+- bytes: 1
+  key: ruta
+  type: unsigned
+- bytes: 1
+  key: lado
+  type: bool
+- bytes: 2
+  key: geocerca
+  type: unsigned
+- bytes: 1
+  key: estado
+  type: char
+- bytes: 4
+  key: salida
+  type: unsigned
+- bytes: 4
+  key: conductor
+  type: unsigned
+- bytes: 1
+  key: orden
+  type: unsigned
+- bytes: 1
+  key: logueado
+  type: bool
+- bytes: 6
+  key: data
+  type: datetime
+- bytes: 2
+  key: programada
+  type: time
+message:
+- bytes: 4
+  key: id
+  type: unsigned
+- bytes: 0
+  key: texto
+  type: string
+message_response:
+- bytes: 4
+  key: id
+  type: unsigned
+- bytes: 1
+  key: read
+  type: bool
+new_ip:
+- bytes: 0
+  key: ip
+  type: string
+operation:
+- bytes: 0
+  key: id
+  type: string
+- bytes: 0
+  key: section
+  type: string
+- bytes: 0
+  key: key
+  type: string
+- bytes: 0
+  key: value
+  type: string
+operation_response:
+- bytes: 0
+  key: id
+  type: string
+parameter:
+- bytes: 0
+  key: id
+  type: string
+- bytes: 0
+  key: nombre
+  type: string
+- bytes: 0
+  key: valor
+  type: string
+position_response:
+- bytes: 1
+  key: reportes
+  type: unsigned
+- array:
+  - bytes: 2
+    key: id
+    type: unsigned
+  bytes: 0
+  key: ids
+  type: array
+remaining_data:
+- bytes: 4
+  key: faltantes
+  type: unsigned
+- bytes: 1
+  key: tabla
+  type: char
+route:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 0
+  key: codigo
+  type: string
+- bytes: 6
+  key: timestamp
+  type: datetime
+route_settings:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 0
+  key: nombre
+  type: string
+- bytes: 1
+  key: ruta
+  type: unsigned
+- bytes: 0
+  key: tipo
+  type: string
+- bytes: 0
+  key: data
+  type: string
+- bytes: 6
+  key: timestamp
+  type: datetime
+schedule:
+- bytes: 4
+  key: salida
+  type: unsigned
+- array:
+  - bytes: 2
+    key: geocerca
+    type: unsigned
+  bytes: 0
+  key: controles
+  type: array
+settings:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 0
+  key: nombre
+  type: string
+- bytes: 0
+  key: tipo
+  type: string
+- bytes: 0
+  key: data
+  type: string
+- bytes: 6
+  key: timestamp
+  type: datetime
+start_sales:
+- bytes: 0
+  key: clave
+  type: string
+- bytes: 0
+  key: dni
+  type: string
+- bytes: 1
+  key: lado
+  type: bool
+- bytes: 1
+  key: ruta
+  type: unsigned
+- bytes: 2
+  key: unidad
+  type: unsigned
+start_sales_response:
+- bytes: 1
+  key: error
+  type: bool
+- bytes: 0
+  key: title
+  type: string
+- bytes: 0
+  key: mensaje
+  type: string
+- array:
+  - bytes: 4
+    key: id
+    type: unsigned
+  - bytes: 2
+    key: conductor_id
+    type: unsigned
+  - bytes: 0
+    key: conductor_codigo
+    type: string
+  - bytes: 1
+    keys:
+    - activo
+    - castigado
+    - conductor
+    - vencido
+    type: flags
+  - bytes: 1
+    key: ruta
+    type: unsigned
+  - bytes: 1
+    key: lado
+    type: bool
+  - bytes: 6
+    key: inicio
+    type: datetime
+  bytes: 0
+  key: sesiones
+  type: array
+tickets:
+- array:
+  - bytes: 2
+    key: boleto
+    type: unsigned
+  - bytes: 2
+    key: conductor
+    type: unsigned
+  - bytes: 4
+    key: correlativo
+    type: unsigned
+  - bytes: 3
+    key: dia
+    type: date
+  - bytes: 2
+    key: fin
+    type: unsigned
+  - bytes: 6
+    key: hora
+    type: datetime
+  - bytes: 4
+    key: inicio
+    type: unsigned
+  - bytes: 2
+    key: inspector
+    type: unsigned
+  - bytes: 1
+    key: medio_pago
+    type: unsigned
+  - bytes: 4
+    key: numero
+    type: unsigned
+  - bytes: 2
+    key: precio
+    type: unsigned
+  - bytes: 1
+    key: ruta
+    type: unsigned
+  - bytes: 4
+    key: sesion
+    type: unsigned
+  - bytes: 2
+    key: unidad
+    type: unsigned
+  - bytes: 0
+    key: tarjeta
+    type: string
+  bytes: 0
+  key: tickets
+  type: array
+tickets_response:
+- array:
+  - bytes: 4
+    key: correlativo
+    type: unsigned
+  - bytes: 0
+    key: id
+    type: string
+  bytes: 0
+  key: tickets
+  type: array
+timestamp:
+- bytes: 6
+  key: timestamp
+  type: timestamp
+timestamp_us:
+- bytes: 8
+  key: timestamp
+  type: timestamp
+trip:
+- bytes: 4
+  key: id
+  type: unsigned
+- bytes: 1
+  key: ruta
+  type: unsigned
+- bytes: 1
+  key: lado
+  type: bool
+- bytes: 6
+  key: inicio
+  type: datetime
+- bytes: 1
+  key: estado
+  type: char
+- bytes: 1
+  key: frecuencia
+  type: unsigned
+- bytes: 4
+  key: conductor
+  type: unsigned
+- bytes: 2
+  key: geocerca
+  type: unsigned
+- array:
+  - bytes: 2
+    key: geocerca
+    type: unsigned
+  - bytes: 1
+    key: tiempo
+    type: signed
+  - bytes: 1
+    key: volada
+    type: signed
+  bytes: 0
+  key: controles
+  type: array
+- bytes: 0
+  key: marcados
+  type: bits
+user_route:
+- bytes: 2
+  key: id
+  type: unsigned
+- bytes: 9
+  key: celular
+  type: string
+- bytes: 14
+  key: nombre
+  type: string
+- array:
+  - bytes: 1
+    key: ruta
+    type: unsigned
+  bytes: 1
+  key: rutas
+  type: array
+- bytes: 6
+  key: timestamp
+  type: datetime

@@ -1,5 +1,7 @@
 import json
 
+import yaml
+
 from protobin.fields import FieldBase, FIELD_MAP
 
 
@@ -38,10 +40,17 @@ class Protocol:
     def __init__(self, file=None, js=None):
         if file:
             with open(file, 'r') as f:
-                js = json.loads(f.read())
-        self.formats = {}
-        for k in js.keys():
-            self.formats[k] = Format(js[k])
+                if 'json' in file:
+                    js = json.loads(f.read())
+                    self.formats = {}
+                    for k in js.keys():
+                        self.formats[k] = Format(js[k])
+                elif 'yaml' in file:
+                    js = yaml.full_load(f.read())
+                    self.formats = {}
+                    for k in js.keys():
+                        self.formats[k] = Format(js[k])
+
 
     def temp_format(self, k):
         return self.formats[k].to_dict()

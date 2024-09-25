@@ -177,7 +177,7 @@ class FieldBool(FieldBase):
     bytes = 1
 
     def to_binary(self, val):
-        return val.to_bytes(1, 'big', signed=False)
+        return bool(val).to_bytes(1, 'big', signed=False)
 
     def from_binary(self, binary):
         return bool(int.from_bytes(binary, 'big', signed=False))
