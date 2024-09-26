@@ -27,9 +27,9 @@ class FieldBase:
     key: Union[str, List[str]]
     type: FieldEnum
 
-    def __init__(self, js):
+    def __init__(self, k, js):
+        self.key = k
         self.type = js['type']
-        self.key = js.get('key')
         self.bytes = js.get('bytes')
 
     def decode(self, binary):
@@ -88,8 +88,8 @@ class FieldBase:
 class FieldArray(FieldBase):
     length: int
 
-    def __init__(self, js):
-        super().__init__(js)
+    def __init__(self, k, js):
+        super().__init__(k, js)
         self.array = js['array']
 
     def decode(self, binary):
@@ -108,7 +108,7 @@ class FieldArray(FieldBase):
         length = len(val)
         binary += length.to_bytes(1, 'big')
         for i in range(length):
-            fields = [FIELD_MAP[f['type']](f) for f in self.array]
+            fields = [FIELD_MAP[f['type']](k, f) for k, f in self.array.items()]
             for f in fields:
                 binary += f.encode(val[i])
         return binary
@@ -117,7 +117,7 @@ class FieldArray(FieldBase):
         lista = []
         for i in range(self.length):
             data = {}
-            fields = [FIELD_MAP[f['type']](f) for f in self.array]
+            fields = [FIELD_MAP[f['type']](k, f) for k, f in self.array.items()]
             for f in fields:
                 val, binary = f.decode(binary)
                 data[f.key] = val
@@ -128,8 +128,8 @@ class FieldArray(FieldBase):
 class FieldBits(FieldBase):
     length: int
 
-    def __init__(self, js):
-        super().__init__(js)
+    def __init__(self, k, js):
+        super().__init__(k, js)
         self.length = js.get('length', 0)
         self.bytes = math.ceil(self.length / 8)
 
@@ -208,8 +208,8 @@ class FieldChar(FieldBase):
 
 class FieldDate(FieldBase):
 
-    def __init__(self, js):
-        super().__init__(js)
+    def __init__(self, k, js):
+        super().__init__(k, js)
         self.bytes = 3
 
     def to_binary(self, val: datetime.datetime | str):
@@ -230,8 +230,8 @@ class FieldDate(FieldBase):
 
 class FieldDateTime(FieldBase):
 
-    def __init__(self, js):
-        super().__init__(js)
+    def __init__(self, k, js):
+        super().__init__(k, js)
         self.bytes = 6
 
     def to_binary(self, val: datetime.datetime | str):
@@ -261,12 +261,11 @@ class FieldDateTime(FieldBase):
 
 
 class FieldFlags(FieldBase):
-    keys: List[str]
 
-    def __init__(self, js):
-        super().__init__(js)
-        self.keys = js.get('keys')
-        self.length = len(self.keys)
+    def __init__(self, k, js):
+        super().__init__(k, js)
+        self.key = self.key.split(',')
+        self.length = len(self.key)
         self.bytes = math.ceil(self.length / 8)
 
     def encode(self, data):
@@ -279,23 +278,23 @@ class FieldFlags(FieldBase):
         for b in bits:
             flags.append(b == '1')
         val = {}
-        order = -len(self.keys)
-        for k in self.keys:
+        order = -len(self.key)
+        for k in self.key:
             val[k] = flags[order]
             order += 1
         return val
 
     def to_binary(self, data):
-        bits = '0' * (8 - (len(self.keys) % 8))
-        for k in self.keys:
+        bits = '0' * (8 - (len(self.key) % 8))
+        for k in self.key:
             bits += '1' if data[k] else '0'
         return int(bits, 2).to_bytes(self.bytes, 'big', signed=False)
 
 
 class FieldFloat(FieldBase):
 
-    def __init__(self, js):
-        super().__init__(js)
+    def __init__(self, k, js):
+        super().__init__(k, js)
         self.decimals = js['decimals']
 
     def from_binary(self, binary):
@@ -364,8 +363,8 @@ class FieldTime(FieldBase):
 
 class FieldTimestamp(FieldBase):
 
-    def __init__(self, js):
-        super().__init__(js)
+    def __init__(self, k, js):
+        super().__init__(k, js)
         self.bytes = 8
 
     def to_binary(self, val: datetime.datetime | str):

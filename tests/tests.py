@@ -68,62 +68,62 @@ class BasicTest(unittest.TestCase):
         self.protocol = Protocol(js={
             'array': {
                 "header": "A",
-                "format": [
-                    {'key': 'test', 'bytes': 0, 'type': 'array', 'array': [
-                        {'key': 'test', 'bytes': 0, 'type': 'string'}
-                    ]}]
+                "fields": {
+                    'test': {'bytes': 0, 'type': 'array', 'array': {
+                        'test': {'bytes': 0, 'type': 'string'}
+                    }}}
             },
             'bits': {
                 "header": "B",
-                "format": [{'key': 'test', 'type': 'bits'}]
+                "fields": {'test': {'type': 'bits'}}
             },
             'bits_fixed': {
                 "header": "b",
-                "format": [{'key': 'test', 'type': 'bits', 'length': 7}]
+                "fields": {'test': {'type': 'bits', 'length': 7}}
             },
             'bool': {
                 "header": "BO",
-                "format": [{'key': 'test', 'bytes': 1, 'type': 'bool'}]
+                "fields": {'test': {'bytes': 1, 'type': 'bool'}}
             },
             'char': {
                 "header": "C",
-                "format": [{'key': 'test', 'bytes': 1, 'type': 'char'}]
+                "fields": {'test': {'bytes': 1, 'type': 'char'}}
             },
             'date': {
                 "header": "D",
-                "format": [{'key': 'test', 'bytes': 1, 'type': 'date'}]
+                "fields": {'test': {'bytes': 1, 'type': 'date'}}
             },
             'datetime': {
                 "header": "d",
-                "format": [{'key': 'test', 'bytes': 1, 'type': 'datetime'}]
+                "fields": {'test': {'bytes': 1, 'type': 'datetime'}}
             },
             'flags': {
                 "header": "F",
-                "format": [{'keys': ['f1', 'f2', 'f3', 'f4'], 'type': 'flags'}]
+                "fields": {'f1,f2,f3,f4': {'type': 'flags'}}
             },
             'float': {
                 "header": "f",
-                "format": [{'key': 'test', 'bytes': 4, 'decimals': 6, 'type': 'float'}]
+                "fields": {'test': {'bytes': 4, 'decimals': 6, 'type': 'float'}}
             },
             'signed': {
                 "header": "+",
-                "format": [{'key': 'test', 'bytes': 2, 'type': 'signed'}]
+                "fields": {'test': {'bytes': 2, 'type': 'signed'}}
             },
             'string': {
                 "header": "S",
-                "format": [{'key': 'test', 'bytes': 0, 'type': 'string'}]
+                "fields": {'test': {'bytes': 0, 'type': 'string'}}
             },
             'time': {
                 "header": "T",
-                "format": [{'key': 'test', 'bytes': 2, 'type': 'time'}]
+                "fields": {'test': {'bytes': 2, 'type': 'time'}}
             },
             'timestamp': {
                 "header": "TS",
-                "format": [{'key': 'test', 'bytes': 8, 'type': 'timestamp'}]
+                "fields": {'test': {'bytes': 8, 'type': 'timestamp'}}
             },
             'unsigned': {
                 "header": "u",
-                "format": [{'key': 'test', 'bytes': 3, 'type': 'unsigned'}]
+                "fields": {'test': {'bytes': 3, 'type': 'unsigned'}}
             }
         })
 
@@ -278,11 +278,11 @@ class AdvancedTest(unittest.TestCase):
     def test_json(self):
         protocol = Protocol(js={'medida':
             {'header': 'M',
-             'format': [
-                {'key': 'id', 'bytes': 1, 'type': 'unsigned'},
-                {'key': 'nombre', 'type': 'string'},
-                {'key': 'valor', 'bytes': 2, 'type': 'signed'}
-            ]}})
+             'fields': {
+                'id': {'bytes': 1, 'type': 'unsigned'},
+                'nombre': {'type': 'string'},
+                'valor': {'bytes': 2, 'type': 'signed'}
+             }}})
         data = {'id': 2, 'nombre': 'Voltaje', 'valor': -20}
         binary = protocol.encode(data, 'medida')
         h, recv = protocol.decode(binary)

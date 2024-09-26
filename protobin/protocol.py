@@ -9,11 +9,11 @@ class Format:
 
     fields: [FieldBase]
 
-    def __init__(self, fields: [object]):
+    def __init__(self, format: [object]):
         self.fields = []
-        self.header = fields['header']
-        for f in fields['format']:
-            self.fields.append(FIELD_MAP[f['type']](f))
+        self.header = format['header']
+        for k, f in format['fields'].items():
+            self.fields.append(FIELD_MAP[f['type']](k, f))
 
     def encode(self, data):
         binary = self.header.encode('utf') + b'='
@@ -25,11 +25,11 @@ class Format:
         data = {}
         for f in self.fields:
             val, binary = f.decode(binary)
-            if f.key:
-                data[f.key] = val
-            else:
-                for k in f.keys:
+            if isinstance(f.key, list):
+                for k in f.key:
                     data[k] = val[k]
+            else:
+                data[f.key] = val
         return data
 
     def to_dict(self):
