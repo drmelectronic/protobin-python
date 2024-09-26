@@ -11,11 +11,12 @@ class Format:
 
     def __init__(self, fields: [object]):
         self.fields = []
-        for f in fields:
+        self.header = fields['header']
+        for f in fields['format']:
             self.fields.append(FIELD_MAP[f['type']](f))
 
     def encode(self, data):
-        binary = b''
+        binary = self.header.encode('utf') + b'='
         for f in self.fields:
             binary += f.encode(data)
         return binary
@@ -38,25 +39,31 @@ class Format:
 class Protocol:
 
     def __init__(self, file=None, js=None):
+        self.headers = {}
         if file:
             with open(file, 'r') as f:
                 if 'json' in file:
                     js = json.loads(f.read())
-                    self.formats = {}
-                    for k in js.keys():
-                        self.formats[k] = Format(js[k])
+                    self.load_format(js)
                 elif 'yaml' in file:
                     js = yaml.full_load(f.read())
-                    self.formats = {}
-                    for k in js.keys():
-                        self.formats[k] = Format(js[k])
+                    self.load_format(js)
+        else:
+            self.load_format(js)
 
+    def load_format(self, js):
+        self.formats = {}
+        for k in js.keys():
+            self.formats[k] = Format(js[k])
+            self.headers[js[k]['header']] = k
 
-    def temp_format(self, k):
-        return self.formats[k].to_dict()
+    def get_format(self, h):
+        return self.formats[self.headers[h.decode('utf')]]
 
     def encode(self, data, format):
         return self.formats[format].encode(data)
 
-    def decode(self, binary, format):
-        return self.formats[format].decode(binary)
+    def decode(self, binary):
+        h, binary = binary.split(b'=')
+        format = self.get_format(h)
+        return h.decode('utf'), format.decode(binary)

@@ -1,53 +1,55 @@
 report:
-  positions:
-    bytes: 19
-    type: array
-    array:
-      time:
-        bytes: 6
-        type: datetime
-      lng:
-        bytes: 4
-        decimals: 6
-        type: float
-      lat:
-        bytes: 4
-        decimals: 6
-        type: float
-      speed:
-        bytes: 1
-        type: unsigned
-      mark:
-        bytes: 2
-        type: unsigned
-      busstop:
-        bytes: 2
-        type: unsigned
-  trip:
-    bytes: 4
-    type: unsigned
-  route:
-    bytes: 1
-    type: unsigned
-  direction:
-    bytes: 1
-    type: bool
-  state:
-    bytes: 1
-    type: char
-  sales:
-    bytes: 3
-    type: unsigned
-  events:
-    bytes: 3
-    type: array
-    array:
-      id:
-        bytes: 2
-        type: unsigned
-      value:
-        bytes: 1
-        type: unsigned
+  header: P
+  format:
+    positions:
+      bytes: 19
+      type: array
+      array:
+        time:
+          bytes: 6
+          type: datetime
+        lng:
+          bytes: 4
+          decimals: 6
+          type: float
+        lat:
+          bytes: 4
+          decimals: 6
+          type: float
+        speed:
+          bytes: 1
+          type: unsigned
+        mark:
+          bytes: 2
+          type: unsigned
+        busstop:
+          bytes: 2
+          type: unsigned
+    trip:
+      bytes: 4
+      type: unsigned
+    route:
+      bytes: 1
+      type: unsigned
+    direction:
+      bytes: 1
+      type: bool
+    state:
+      bytes: 1
+      type: char
+    sales:
+      bytes: 3
+      type: unsigned
+    events:
+      bytes: 3
+      type: array
+      array:
+        id:
+          bytes: 2
+          type: unsigned
+        value:
+          bytes: 1
+          type: unsigned
 
 ask_schedule:
   id:

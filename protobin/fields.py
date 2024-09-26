@@ -177,10 +177,21 @@ class FieldBool(FieldBase):
     bytes = 1
 
     def to_binary(self, val):
-        return bool(val).to_bytes(1, 'big', signed=False)
+        if val is None:
+            val = 2
+        else:
+            val = bool(val)
+
+        return val.to_bytes(1, 'big', signed=False)
 
     def from_binary(self, binary):
-        return bool(int.from_bytes(binary, 'big', signed=False))
+        val = int.from_bytes(binary, 'big', signed=False)
+        if val == 0:
+            return False
+        elif val == 1:
+            return True
+        else:
+            return None
 
 
 class FieldChar(FieldBase):
@@ -224,7 +235,11 @@ class FieldDateTime(FieldBase):
         self.bytes = 6
 
     def to_binary(self, val: datetime.datetime | str):
-        if isinstance(val, str):
+        if val is None:
+            val = datetime.datetime(2000, 1, 1)
+        elif not isinstance(val, datetime.datetime):
+                raise ValueError(f'Error en el campo "{self.key}" se espera un datetime pero se recibe {val}')
+        elif isinstance(val, str):
             val = datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S').date()
         return bytes([
             self.to_nible(val.day),
@@ -327,8 +342,12 @@ class FieldTime(FieldBase):
 
     bytes = 2
 
-    def to_binary(self, val: datetime.datetime | str):
-        if isinstance(val, str):
+    def to_binary(self, val: datetime.datetime | datetime.time | str):
+        if val is None:
+            val = datetime.time(0, 0)
+        elif not isinstance(val, datetime.datetime) and not isinstance(val, datetime.time):
+                raise ValueError(f'Error en el campo "{self.key}" se espera un datetime o time pero se recibe {val}')
+        elif isinstance(val, str):
             val = datetime.datetime.strptime(val, '%H:%M').date()
         return bytes([
             self.to_nible(val.hour),
@@ -338,6 +357,8 @@ class FieldTime(FieldBase):
     def from_binary(self, binary):
         H, binary = self.get_nible(binary)
         M, binary = self.get_nible(binary)
+        if H == 0 and M == 0:
+            return None
         return datetime.time(H, M)
 
 

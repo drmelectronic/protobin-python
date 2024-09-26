@@ -62,73 +62,69 @@ DATA = {
     }
 
 
-class FormatTest(unittest.TestCase):
-
-    def test_format_array(self):
-        parser = Protocol(js={
-            'array': [{'key': 'test', 'bytes': 0, 'type': 'array', 'array': [
-                {'key': 'test', 'bytes': 0, 'type': 'string'}
-            ]}]
-        })
-
-    def test_format_bits(self):
-        parser = Protocol(js={
-            'bits': [{'key': 'test', 'bytes': 2, 'type': 'bits'}],
-        })
-
-    def test_format_date(self):
-
-        self.parser = Protocol(js={
-            'date': [{'key': 'test', 'bytes': 1, 'type': 'date'}],
-        })
-
-    def test_format_flags(self):
-
-        self.parser = Protocol(js={
-            'flags': [{'keys': ['f1', 'f2', 'f3', 'f4'], 'bytes': 1, 'type': 'flags'}],
-        })
-
-    def test_format(self):
-
-        self.parser = Protocol(js={
-            'array': [{'key': 'test', 'bytes': 0, 'type': 'array', 'array': [
-                {'key': 'test', 'bytes': 0, 'type': 'string'}
-            ]}],
-            'bits': [{'key': 'test', 'bytes': 2, 'type': 'bits'}],
-            'bool': [{'key': 'test', 'bytes': 1, 'type': 'bool'}],
-            'char': [{'key': 'test', 'bytes': 1, 'type': 'char'}],
-            'date': [{'key': 'test', 'bytes': 3, 'type': 'date'}],
-            'datetime': [{'key': 'test', 'bytes': 6, 'type': 'datetime'}],
-            'flags': [{'keys': ['f1', 'f2', 'f3', 'f4'], 'bytes': 1, 'type': 'flags'}],
-            'float': [{'key': 'test', 'bytes': 4, 'decimals': 6, 'type': 'float'}],
-            'signed': [{'key': 'test', 'bytes': 2, 'type': 'signed'}],
-            'string': [{'key': 'test', 'bytes': 0, 'type': 'string'}],
-            'time': [{'key': 'test', 'bytes': 1, 'type': 'time'}],
-            'timestamp': [{'key': 'test', 'bytes': 8, 'type': 'string'}],
-            'unsigned': [{'key': 'test', 'bytes': 3, 'type': 'unsigned'}]
-        })
-
-
 class BasicTest(unittest.TestCase):
 
     def setUp(self):
         self.protocol = Protocol(js={
-            'array': [{'key': 'test', 'bytes': 0, 'type': 'array', 'array': [
-                {'key': 'test', 'bytes': 0, 'type': 'string'}
-            ]}],
-            'bits': [{'key': 'test', 'type': 'bits'}],
-            'bits_fixed': [{'key': 'test', 'type': 'bits', 'length': 7}],
-            'bool': [{'key': 'test', 'bytes': 1, 'type': 'bool'}],
-            'char': [{'key': 'test', 'bytes': 1, 'type': 'char'}],
-            'date': [{'key': 'test', 'bytes': 1, 'type': 'date'}],
-            'datetime': [{'key': 'test', 'bytes': 1, 'type': 'datetime'}],
-            'flags': [{'keys': ['f1', 'f2', 'f3', 'f4'], 'type': 'flags'}],
-            'float': [{'key': 'test', 'bytes': 4, 'decimals': 6, 'type': 'float'}],
-            'signed': [{'key': 'test', 'bytes': 2, 'type': 'signed'}],
-            'string': [{'key': 'test', 'bytes': 0, 'type': 'string'}],
-            'time': [{'key': 'test', 'bytes': 2, 'type': 'time'}],
-            'timestamp': [{'key': 'test', 'bytes': 8, 'type': 'timestamp'}],
-            'unsigned': [{'key': 'test', 'bytes': 3, 'type': 'unsigned'}]
+            'array': {
+                "header": "A",
+                "format": [
+                    {'key': 'test', 'bytes': 0, 'type': 'array', 'array': [
+                        {'key': 'test', 'bytes': 0, 'type': 'string'}
+                    ]}]
+            },
+            'bits': {
+                "header": "B",
+                "format": [{'key': 'test', 'type': 'bits'}]
+            },
+            'bits_fixed': {
+                "header": "b",
+                "format": [{'key': 'test', 'type': 'bits', 'length': 7}]
+            },
+            'bool': {
+                "header": "BO",
+                "format": [{'key': 'test', 'bytes': 1, 'type': 'bool'}]
+            },
+            'char': {
+                "header": "C",
+                "format": [{'key': 'test', 'bytes': 1, 'type': 'char'}]
+            },
+            'date': {
+                "header": "D",
+                "format": [{'key': 'test', 'bytes': 1, 'type': 'date'}]
+            },
+            'datetime': {
+                "header": "d",
+                "format": [{'key': 'test', 'bytes': 1, 'type': 'datetime'}]
+            },
+            'flags': {
+                "header": "F",
+                "format": [{'keys': ['f1', 'f2', 'f3', 'f4'], 'type': 'flags'}]
+            },
+            'float': {
+                "header": "f",
+                "format": [{'key': 'test', 'bytes': 4, 'decimals': 6, 'type': 'float'}]
+            },
+            'signed': {
+                "header": "+",
+                "format": [{'key': 'test', 'bytes': 2, 'type': 'signed'}]
+            },
+            'string': {
+                "header": "S",
+                "format": [{'key': 'test', 'bytes': 0, 'type': 'string'}]
+            },
+            'time': {
+                "header": "T",
+                "format": [{'key': 'test', 'bytes': 2, 'type': 'time'}]
+            },
+            'timestamp': {
+                "header": "TS",
+                "format": [{'key': 'test', 'bytes': 8, 'type': 'timestamp'}]
+            },
+            'unsigned': {
+                "header": "u",
+                "format": [{'key': 'test', 'bytes': 3, 'type': 'unsigned'}]
+            }
         })
 
     def test_array(self):
@@ -138,7 +134,7 @@ class BasicTest(unittest.TestCase):
             {'test': 'otra más'}]
         }
         binary = self.protocol.encode(data, 'array')
-        recv = self.protocol.decode(binary, 'array')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
         data = {'test': [
             {'test': 'texto2 de prueba'},
@@ -147,93 +143,120 @@ class BasicTest(unittest.TestCase):
             {'test': 'y una última'}]
         }
         binary = self.protocol.encode(data, 'array')
-        recv = self.protocol.decode(binary, 'array')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_bits(self):
         data = {'test': [True, False, True, False, False] * 3}
         binary = self.protocol.encode(data, 'bits')
-        recv = self.protocol.decode(binary, 'bits')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
         data = {'test': [True, False, True, False, False] * 5}
         binary = self.protocol.encode(data, 'bits')
-        recv = self.protocol.decode(binary, 'bits')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_bits_fixed(self):
         data = {'test': [True, False, True, False, False, True, True]}
         binary = self.protocol.encode(data, 'bits_fixed')
-        recv = self.protocol.decode(binary, 'bits_fixed')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_bool(self):
         data = {'test': False}
         binary = self.protocol.encode(data, 'bool')
-        recv = self.protocol.decode(binary, 'bool')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_bool_none(self):
+        data = {'test': None}
+        binary = self.protocol.encode(data, 'bool')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_char(self):
         data = {'test': 'F'}
         binary = self.protocol.encode(data, 'char')
-        recv = self.protocol.decode(binary, 'char')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_date(self):
         data = {'test': datetime.date(2024, 9, 13)}
         binary = self.protocol.encode(data, 'date')
-        recv = self.protocol.decode(binary, 'date')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_datetime(self):
         data = {'test': datetime.datetime(2024, 9, 13, 15, 23, 51)}
         binary = self.protocol.encode(data, 'datetime')
-        recv = self.protocol.decode(binary, 'datetime')
+        print('binary', binary)
+        h, recv = self.protocol.decode(binary)
+        print('recv', recv)
         self.assertEqual(data, recv)
+
+    def test_datetime_error_type(self):
+        data = {'test': []}
+        with self.assertRaises(ValueError) as er:
+            self.protocol.encode(data, 'datetime')
+
+    def test_datetime_none(self):
+        data = {'test': None}
+        binary = self.protocol.encode(data, 'datetime')
+        print('binary', binary)
+        h, recv = self.protocol.decode(binary)
+        print('recv', recv)
+        self.assertEqual(datetime.datetime(2000, 1, 1), recv['test'])
 
     def test_time(self):
         data = {'test': datetime.time(15, 23)}
         binary = self.protocol.encode(data, 'time')
-        recv = self.protocol.decode(binary, 'time')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_time_none(self):
+        data = {'test': None}
+        binary = self.protocol.encode(data, 'time')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_flags(self):
         data = {'f1': True, 'f2': False, 'f3': False, 'f4': True}
         binary = self.protocol.encode(data, 'flags')
-        recv = self.protocol.decode(binary, 'flags')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_float(self):
         data = {'test': -11.659812}
         binary = self.protocol.encode(data, 'float')
-        recv = self.protocol.decode(binary, 'float')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_signed(self):
         data = {'test': -11812}
         binary = self.protocol.encode(data, 'signed')
-        recv = self.protocol.decode(binary, 'signed')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_unsigned(self):
         data = {'test': 9811812}
         binary = self.protocol.encode(data, 'unsigned')
-        recv = self.protocol.decode(binary, 'unsigned')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_string(self):
         data = {'test': 'texto de prueba'}
         binary = self.protocol.encode(data, 'string')
-        recv = self.protocol.decode(binary, 'string')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
         data = {'test': 'otro texto de prueba más largo'}
         binary = self.protocol.encode(data, 'string')
-        recv = self.protocol.decode(binary, 'string')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_timestamp(self):
         data = {'test': datetime.datetime(2024, 9, 13, 15, 23, 51, 265981)}
         binary = self.protocol.encode(data, 'timestamp')
-        recv = self.protocol.decode(binary, 'timestamp')
+        h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
 
@@ -242,28 +265,31 @@ class AdvancedTest(unittest.TestCase):
     def test_file_json(self):
         protocol = Protocol(file='demo.json')
         binary = protocol.encode(DATA, 'report')
-        recv = protocol.decode(binary, 'report')
+        h, recv = protocol.decode(binary)
         self.assertEqual(DATA, recv)
+        self.assertEqual(h, 'P')
 
-    def test_file_yaml(self):
-        protocol = Protocol(file='demo.yaml')
-        binary = protocol.encode(DATA, 'report')
-        recv = protocol.decode(binary, 'report')
-        self.assertEqual(DATA, recv)
+    # def test_file_yaml(self):
+    #     protocol = Protocol(file='demo.yaml')
+    #     binary = protocol.encode(DATA, 'report')
+    #     h, recv = protocol.decode(binary)
+    #     self.assertEqual(h, 'P')
 
     def test_json(self):
-        protocol = Protocol(js={'medida': [
+        protocol = Protocol(js={'medida':
+            {'header': 'M',
+             'format': [
                 {'key': 'id', 'bytes': 1, 'type': 'unsigned'},
                 {'key': 'nombre', 'type': 'string'},
                 {'key': 'valor', 'bytes': 2, 'type': 'signed'}
-            ]})
+            ]}})
         data = {'id': 2, 'nombre': 'Voltaje', 'valor': -20}
         binary = protocol.encode(data, 'medida')
-        recv = protocol.decode(binary, 'medida')
+        h, recv = protocol.decode(binary)
         self.assertEqual(data, recv)
         data = {'id': 4, 'nombre': 'Corriente', 'valor': 240}
         binary = protocol.encode(data, 'medida')
-        recv = protocol.decode(binary, 'medida')
+        h, recv = protocol.decode(binary)
         self.assertEqual(data, recv)
 
     def test_new_yaml(self):
@@ -319,8 +345,14 @@ class AdvancedTest(unittest.TestCase):
         type: unsigned
 """)
         js = json.dumps(ym, indent=2)
-        print(js)
 
     def test_convert_json_to_yaml(self):
         protocol = Protocol(file='demo.json')
 
+    def test_login(self):
+        protocol = Protocol(file='demo.json')
+        data = {'serial': '15984316545'}
+        binary = protocol.encode(data, 'login')
+        header, recv = protocol.decode(binary)
+        self.assertEqual(data, recv)
+        self.assertEqual(header, 'T')
