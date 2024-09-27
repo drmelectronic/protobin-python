@@ -1,29 +1,38 @@
 import json
-
 import yaml
-
 from protobin.fields import FieldBase, FIELD_MAP
 
 
 class Format:
 
-    fields: [FieldBase]
+    input_fields: [FieldBase]
+    output_fields: [FieldBase]
 
-    def __init__(self, format: [object]):
-        self.fields = []
+    def __init__(self, name: str, format, server: bool):
+        self.name = name
+        self.input_fields = []
+        self.output_fields = []
         self.header = format['header']
-        for k, f in format['fields'].items():
-            self.fields.append(FIELD_MAP[f['type']](k, f))
+        if server is None:
+            input_mode = 'fields'
+            output_mode = 'fields'
+        else:
+            input_mode = 'device' if server else 'server'
+            output_mode = 'server' if server else 'device'
+        for k, f in format[input_mode].items():
+            self.input_fields.append(FIELD_MAP[f['type']](k, f))
+        for k, f in format[output_mode].items():
+            self.output_fields.append(FIELD_MAP[f['type']](k, f))
 
     def encode(self, data):
         binary = self.header.encode('utf') + b'='
-        for f in self.fields:
+        for f in self.output_fields:
             binary += f.encode(data)
         return binary
 
     def decode(self, binary):
         data = {}
-        for f in self.fields:
+        for f in self.input_fields:
             val, binary = f.decode(binary)
             if isinstance(f.key, list):
                 for k in f.key:
@@ -32,13 +41,11 @@ class Format:
                 data[f.key] = val
         return data
 
-    def to_dict(self):
-        return [f.to_dict() for f in self.fields]
-
 
 class Protocol:
 
-    def __init__(self, file=None, js=None):
+    def __init__(self, server: bool = None, file=None, js=None):
+        self.server = server
         self.headers = {}
         if file:
             with open(file, 'r') as f:
@@ -54,7 +61,7 @@ class Protocol:
     def load_format(self, js):
         self.formats = {}
         for k in js.keys():
-            self.formats[k] = Format(js[k])
+            self.formats[k] = Format(name=k, format=js[k], server=self.server)
             self.headers[js[k]['header']] = k
 
     def get_format(self, h):
@@ -66,4 +73,4 @@ class Protocol:
     def decode(self, binary):
         h, binary = binary.split(b'=')
         format = self.get_format(h)
-        return h.decode('utf'), format.decode(binary)
+        return format.name, format.decode(binary)

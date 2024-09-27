@@ -12,7 +12,7 @@ DATA = {
                 'lng': -11.485014,
                 'lat': -77.621845,
                 'speed': 20,
-                'mark': 0,
+                'mark': None,
                 'busstop': 16
             },
             {
@@ -20,7 +20,7 @@ DATA = {
                 'lng': -11.485414,
                 'lat': -77.622245,
                 'speed': 25,
-                'mark': 0,
+                'mark': None,
                 'busstop': 16
             },
             {
@@ -28,7 +28,7 @@ DATA = {
                 'lng': -11.485514,
                 'lat': -77.621945,
                 'speed': 18,
-                'mark': 0,
+                'mark': None,
                 'busstop': 16
             },
             {
@@ -228,6 +228,7 @@ class BasicTest(unittest.TestCase):
     def test_float(self):
         data = {'test': -11.659812}
         binary = self.protocol.encode(data, 'float')
+        print(binary)
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
@@ -263,11 +264,12 @@ class BasicTest(unittest.TestCase):
 class AdvancedTest(unittest.TestCase):
 
     def test_file_json(self):
-        protocol = Protocol(file='demo.json')
-        binary = protocol.encode(DATA, 'report')
-        h, recv = protocol.decode(binary)
+        device = Protocol(file='demo.json', server=False)
+        binary = device.encode(DATA, 'report')
+        server = Protocol(file='demo.json', server=True)
+        name, recv = server.decode(binary)
         self.assertEqual(DATA, recv)
-        self.assertEqual(h, 'P')
+        self.assertEqual(name, 'report')
 
     # def test_file_yaml(self):
     #     protocol = Protocol(file='demo.yaml')
@@ -347,12 +349,27 @@ class AdvancedTest(unittest.TestCase):
         js = json.dumps(ym, indent=2)
 
     def test_convert_json_to_yaml(self):
-        protocol = Protocol(file='demo.json')
+        protocol = Protocol(file='demo.json', server=True)
 
     def test_login(self):
-        protocol = Protocol(file='demo.json')
+        device = Protocol(file='demo.json', server=False)
+        server = Protocol(file='demo.json', server=True)
         data = {'serial': '15984316545'}
-        binary = protocol.encode(data, 'login')
-        header, recv = protocol.decode(binary)
+        binary = device.encode(data, 'login')
+        header, recv = server.decode(binary)
+        self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
-        self.assertEqual(header, 'T')
+        data = {
+            'id': 43,
+            'bus_number': 18,
+            'route': 2,
+            'direction': True,
+            'geofence': None,
+            'state': 'R',
+            'trip': 5681121,
+            'driver': 1432
+        }
+        binary = server.encode(data, 'login')
+        header, recv = device.decode(binary)
+        self.assertEqual(header, 'login')
+        self.assertEqual(data, recv)

@@ -13,6 +13,7 @@ class FieldEnum(enum.StrEnum):
     CHAR = 'char'
     DATE = 'date'
     DATETIME = 'datetime'
+    ID = 'id'
     FLAGS = 'flags'
     FLOAT = 'float'
     SIGNED = 'signed'
@@ -77,12 +78,6 @@ class FieldBase:
             return binary[:self.bytes], binary[self.bytes:]
         return binary[1:binary[0] + 1], binary[binary[0] + 1:]
 
-    def to_dict(self):
-        return {
-            'key': self.key,
-            'bytes': self.bytes,
-            'type': self.type
-        }
 
 
 class FieldArray(FieldBase):
@@ -97,11 +92,6 @@ class FieldArray(FieldBase):
         binary = binary[1:]
         val, binary = self.from_binary(binary)
         return val, binary
-
-    def to_dict(self):
-        d = super().to_dict()
-        d['array'] = self.array
-        return d
 
     def to_binary(self, val):
         binary = b''
@@ -304,10 +294,23 @@ class FieldFloat(FieldBase):
     def to_binary(self, val):
         return int(round(val * (10 ** self.decimals))).to_bytes(self.bytes, 'big', signed=True)
 
-    def to_dict(self):
-        d = super().to_dict()
-        d['decimals'] = self.decimals
-        return d
+
+class FieldId(FieldBase):
+
+    def to_binary(self, val):
+        if val is None:
+            val = 0
+        max_value = 256 ** self.bytes - 1
+        val = min(val, max_value)
+        if val < 0:
+            raise ValueError('Negative values not allowed')
+        return int(val).to_bytes(self.bytes, 'big', signed=False)
+
+    def from_binary(self, binary):
+        val = int.from_bytes(binary[:self.bytes], 'big', signed=False)
+        if val == 0:
+            val = None
+        return val
 
 
 class FieldSigned(FieldBase):
@@ -380,11 +383,11 @@ class FieldUnsigned(FieldBase):
 
     def to_binary(self, val):
         if val is None:
-            val = 0
+            raise ValueError(f'Error en el campo "{self.key}" no se permite None')
         max_value = 256 ** self.bytes - 1
         val = min(val, max_value)
         if val < 0:
-            raise ValueError('Negative values not allowed')
+            raise ValueError(f'Error en el campo "{self.key}" se espera enteros positivos y se recibió {val}')
         return int(val).to_bytes(self.bytes, 'big', signed=False)
 
     def from_binary(self, binary):
@@ -400,6 +403,7 @@ FIELD_MAP = {
     'datetime': FieldDateTime,
     'flags': FieldFlags,
     'float': FieldFloat,
+    'id': FieldId,
     'signed': FieldSigned,
     'string': FieldString,
     'time': FieldTime,
