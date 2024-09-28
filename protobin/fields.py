@@ -25,11 +25,13 @@ class FieldEnum(enum.StrEnum):
 
 class FieldBase:
     bytes: int | None
-    key: Union[str, List[str]]
+    keys: List[str] | None
+    key: str
     type: FieldEnum
 
     def __init__(self, k, js):
         self.key = k
+        self.keys = None
         self.type = js['type']
         self.bytes = js.get('bytes')
 
@@ -77,7 +79,6 @@ class FieldBase:
         if self.bytes:
             return binary[:self.bytes], binary[self.bytes:]
         return binary[1:binary[0] + 1], binary[binary[0] + 1:]
-
 
 
 class FieldArray(FieldBase):
@@ -203,7 +204,9 @@ class FieldDate(FieldBase):
         self.bytes = 3
 
     def to_binary(self, val: datetime.datetime | str):
-        if isinstance(val, str):
+        if val is None:
+            val = datetime.datetime(2000, 1, 1)
+        elif isinstance(val, str):
             val = datetime.datetime.strptime(val, '%Y-%m-%d').date()
         return bytes([
             self.to_nible(val.day),
@@ -254,7 +257,7 @@ class FieldFlags(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
-        self.key = self.key.split(',')
+        self.keys = self.key.split(',')
         self.length = len(self.key)
         self.bytes = math.ceil(self.length / 8)
 
@@ -268,15 +271,15 @@ class FieldFlags(FieldBase):
         for b in bits:
             flags.append(b == '1')
         val = {}
-        order = -len(self.key)
-        for k in self.key:
+        order = -len(self.keys)
+        for k in self.keys:
             val[k] = flags[order]
             order += 1
         return val
 
     def to_binary(self, data):
-        bits = '0' * (8 - (len(self.key) % 8))
-        for k in self.key:
+        bits = '0' * (8 - (len(self.keys) % 8))
+        for k in self.keys:
             bits += '1' if data[k] else '0'
         return int(bits, 2).to_bytes(self.bytes, 'big', signed=False)
 

@@ -34,8 +34,8 @@ class Format:
         data = {}
         for f in self.input_fields:
             val, binary = f.decode(binary)
-            if isinstance(f.key, list):
-                for k in f.key:
+            if f.keys:
+                for k in f.keys:
                     data[k] = val[k]
             else:
                 data[f.key] = val
