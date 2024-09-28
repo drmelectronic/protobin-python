@@ -61,6 +61,8 @@ class Protocol:
     def load_format(self, js):
         self.formats = {}
         for k in js.keys():
+            if js[k]['header'] in self.headers:
+                raise KeyError(f'El header "{js[k]['header']}" ya está en uso en "{self.headers[js[k]["header"]]}"')
             self.formats[k] = Format(name=k, format=js[k], server=self.server)
             self.headers[js[k]['header']] = k
 

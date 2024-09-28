@@ -2,7 +2,7 @@
     "login": {
         "header": "T",
         "device": {
-            "serial": {"bytes": 0, "type": "string"}
+            "serial": {"type": "string"}
         },
          "server": {
             "id": {"bytes": 2, "type": "id"},
@@ -31,7 +31,7 @@
             "direction": {"bytes": 1, "type": "bool"},
             "state": {"bytes": 1, "type": "char"},
             "sales": {"bytes": 3, "type": "unsigned"},
-            "events": {"bytes": 3, "type": "array", "array": {
+            "events": {"type": "array", "array": {
                 "id": {"bytes": 2, "type": "unsigned"},
                 "value": {"bytes": 1, "type": "unsigned"}}
             }

@@ -271,12 +271,6 @@ class AdvancedTest(unittest.TestCase):
         self.assertEqual(DATA, recv)
         self.assertEqual(name, 'report')
 
-    # def test_file_yaml(self):
-    #     protocol = Protocol(file='demo.yaml')
-    #     binary = protocol.encode(DATA, 'report')
-    #     h, recv = protocol.decode(binary)
-    #     self.assertEqual(h, 'P')
-
     def test_json(self):
         protocol = Protocol(js={'medida':
             {'header': 'M',
@@ -295,65 +289,131 @@ class AdvancedTest(unittest.TestCase):
         self.assertEqual(data, recv)
 
     def test_new_yaml(self):
-        ym = yaml.full_load("""report:
-  positions:
-    bytes: 19
-    type: array
-    array:
-      time:
-        bytes: 6
-        type: datetime
-      lng:
-        bytes: 4
-        decimals: 6
-        type: float
-      lat:
-        bytes: 4
-        decimals: 6
-        type: float
-      speed:
-        bytes: 1
-        type: unsigned
-      mark:
-        bytes: 2
-        type: unsigned
-      busstop:
-        bytes: 2
-        type: unsigned
-  trip:
-    bytes: 4
-    type: unsigned
-  route:
-    bytes: 1
-    type: unsigned
-  direction:
-    bytes: 1
-    type: bool
-  state:
-    bytes: 1
-    type: char
-  sales:
-    bytes: 3
-    type: unsigned
-  events:
-    bytes: 3
-    type: array
-    array:
-      id:
-        bytes: 2
-        type: unsigned
-      value:
-        bytes: 1
-        type: unsigned
+        ym = yaml.full_load("""
+login:
+  device:
+    serial:
+      type: string
+  header: T
+  server:
+    bus_number:
+      bytes: 2
+      type: id
+    direction:
+      bytes: 1
+      type: bool
+    driver:
+      bytes: 4
+      type: id
+    geofence:
+      bytes: 2
+      type: id
+    id:
+      bytes: 2
+      type: id
+    route:
+      bytes: 1
+      type: id
+    state:
+      bytes: 1
+      type: char
+    trip:
+      bytes: 4
+      type: id
+report:
+  device:
+    direction:
+      bytes: 1
+      type: bool
+    events:
+      array:
+        id:
+          bytes: 2
+          type: unsigned
+        value:
+          bytes: 1
+          type: unsigned
+      bytes: 3
+      type: array
+    positions:
+      array:
+        busstop:
+          bytes: 2
+          type: id
+        lat:
+          bytes: 4
+          decimals: 6
+          type: float
+        lng:
+          bytes: 4
+          decimals: 6
+          type: float
+        mark:
+          bytes: 2
+          type: id
+        speed:
+          bytes: 1
+          type: unsigned
+        time:
+          bytes: 6
+          type: datetime
+      bytes: 19
+      type: array
+    route:
+      bytes: 1
+      type: unsigned
+    sales:
+      bytes: 3
+      type: unsigned
+    state:
+      bytes: 1
+      type: char
+    trip:
+      bytes: 4
+      type: unsigned
+  header: P
+  server:
+    positions:
+      bytes: 1
+      type: unsigned
 """)
         js = json.dumps(ym, indent=2)
 
     def test_convert_json_to_yaml(self):
-        protocol = Protocol(file='demo.json', server=True)
+        with open('demo.json', 'r') as f:
+            js = json.loads(f.read())
+        ym = yaml.dump(js)
+        print(ym)
 
     def test_login(self):
         device = Protocol(file='demo.json', server=False)
         server = Protocol(file='demo.json', server=True)
+
+        data = {'serial': '15984316545'}
+        binary = device.encode(data, 'login')
+        print('client', binary)
+        header, recv = server.decode(binary)
+        self.assertEqual(header, 'login')
+        self.assertEqual(data, recv)
+        data = {
+            'id': 43,
+            'bus_number': 18,
+            'route': 2,
+            'direction': True,
+            'geofence': None,
+            'state': 'R',
+            'trip': 5681121,
+            'driver': 1432
+        }
+        binary = server.encode(data, 'login')
+        print('server', binary)
+        header, recv = device.decode(binary)
+        self.assertEqual(header, 'login')
+        self.assertEqual(data, recv)
+
+    def test_file_yaml(self):
+        device = Protocol(file='demo.yaml', server=False)
+        server = Protocol(file='demo.yaml', server=True)
         data = {'serial': '15984316545'}
         binary = device.encode(data, 'login')
         header, recv = server.decode(binary)
@@ -373,3 +433,46 @@ class AdvancedTest(unittest.TestCase):
         header, recv = device.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
+
+    def test_file_json_yaml(self):
+        device = Protocol(file='demo.json', server=False)
+        server = Protocol(file='demo.yaml', server=True)
+        data = {'serial': '15984316545'}
+        binary = device.encode(data, 'login')
+        header, recv = server.decode(binary)
+        self.assertEqual(header, 'login')
+        self.assertEqual(data, recv)
+        data = {
+            'id': 43,
+            'bus_number': 18,
+            'route': 2,
+            'direction': True,
+            'geofence': None,
+            'state': 'R',
+            'trip': 5681121,
+            'driver': 1432
+        }
+        binary = server.encode(data, 'login')
+        header, recv = device.decode(binary)
+        self.assertEqual(header, 'login')
+        self.assertEqual(data, recv)
+
+    def test_error_header(self):
+        with self.assertRaises(KeyError) as er:
+            Protocol(js={
+                'array': {
+                    "header": "A",
+                    "fields": {
+                        'test': {'bytes': 0, 'type': 'array', 'array': {
+                            'test': {'bytes': 0, 'type': 'string'}
+                        }}}
+                },
+                'bits': {
+                    "header": "B",
+                    "fields": {'test': {'type': 'bits'}}
+                },
+                'bits_fixed': {
+                    "header": "B",
+                    "fields": {'test': {'type': 'bits', 'length': 7}}
+                }
+            })
