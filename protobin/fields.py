@@ -277,9 +277,12 @@ class FieldFlags(FieldBase):
             order += 1
         return val
 
-    def to_binary(self, data):
+    def to_binary(self, data, allow_none=False):
         bits = '0' * (8 - (len(self.keys) % 8))
         for k in self.keys:
+            val = data.get(k)
+            if val is None:
+                raise ValueError(f'Error en el campo "{self.key}" se espera un boolean pero se recibe None')
             bits += '1' if data[k] else '0'
         return int(bits, 2).to_bytes(self.bytes, 'big', signed=False)
 

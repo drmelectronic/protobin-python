@@ -1,7 +1,7 @@
 {
     "login": {
         "header": "T",
-        "device": {
+        "client": {
             "serial": {"type": "string"}
         },
          "server": {
@@ -17,7 +17,7 @@
     },
     "report": {
         "header": "P",
-        "device": {
+        "client": {
             "positions": {"bytes": 19, "type": "array", "array": {
                 "time": {"bytes": 6, "type": "datetime"},
                 "lng": {"bytes": 4, "type": "float", "decimals": 6},

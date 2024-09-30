@@ -17,8 +17,8 @@ class Format:
             input_mode = 'fields'
             output_mode = 'fields'
         else:
-            input_mode = 'device' if server else 'server'
-            output_mode = 'server' if server else 'device'
+            input_mode = 'client' if server else 'server'
+            output_mode = 'server' if server else 'client'
         for k, f in format[input_mode].items():
             self.input_fields.append(FIELD_MAP[f['type']](k, f))
         for k, f in format[output_mode].items():

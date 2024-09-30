@@ -105,6 +105,10 @@ class BasicTest(unittest.TestCase):
                 "header": "f",
                 "fields": {'test': {'bytes': 4, 'decimals': 6, 'type': 'float'}}
             },
+            'id': {
+                "header": "i",
+                "fields": {'test': {'bytes': 4, 'type': 'id'}}
+            },
             'signed': {
                 "header": "+",
                 "fields": {'test': {'bytes': 2, 'type': 'signed'}}
@@ -225,6 +229,16 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_flags_none(self):
+        data = {'f1': True, 'f2': False, 'f3': False, 'f4': None}
+        with self.assertRaises(ValueError):
+            self.protocol.encode(data, 'flags')
+
+    def test_flags_incomplete(self):
+        data = {'f1': True, 'f2': False, 'f3': False}
+        with self.assertRaises(ValueError):
+            self.protocol.encode(data, 'flags')
+
     def test_float(self):
         data = {'test': -11.659812}
         binary = self.protocol.encode(data, 'float')
@@ -241,6 +255,23 @@ class BasicTest(unittest.TestCase):
     def test_unsigned(self):
         data = {'test': 9811812}
         binary = self.protocol.encode(data, 'unsigned')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_unsigned_zero(self):
+        data = {'test': None}
+        with self.assertRaises(ValueError) as er:
+            self.protocol.encode(data, 'unsigned')
+
+    def test_id(self):
+        data = {'test': 254}
+        binary = self.protocol.encode(data, 'id')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_id_zero(self):
+        data = {'test': None}
+        binary = self.protocol.encode(data, 'id')
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
@@ -264,8 +295,8 @@ class BasicTest(unittest.TestCase):
 class AdvancedTest(unittest.TestCase):
 
     def test_file_json(self):
-        device = Protocol(file='demo.json', server=False)
-        binary = device.encode(DATA, 'report')
+        client = Protocol(file='demo.json', server=False)
+        binary = client.encode(DATA, 'report')
         server = Protocol(file='demo.json', server=True)
         name, recv = server.decode(binary)
         self.assertEqual(DATA, recv)
@@ -291,7 +322,7 @@ class AdvancedTest(unittest.TestCase):
     def test_new_yaml(self):
         ym = yaml.full_load("""
 login:
-  device:
+  client:
     serial:
       type: string
   header: T
@@ -321,7 +352,7 @@ login:
       bytes: 4
       type: id
 report:
-  device:
+  client:
     direction:
       bytes: 1
       type: bool
@@ -386,11 +417,11 @@ report:
         print(ym)
 
     def test_login(self):
-        device = Protocol(file='demo.json', server=False)
+        client = Protocol(file='demo.json', server=False)
         server = Protocol(file='demo.json', server=True)
 
         data = {'serial': '15984316545'}
-        binary = device.encode(data, 'login')
+        binary = client.encode(data, 'login')
         print('client', binary)
         header, recv = server.decode(binary)
         self.assertEqual(header, 'login')
@@ -407,15 +438,15 @@ report:
         }
         binary = server.encode(data, 'login')
         print('server', binary)
-        header, recv = device.decode(binary)
+        header, recv = client.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
 
     def test_file_yaml(self):
-        device = Protocol(file='demo.yaml', server=False)
+        client = Protocol(file='demo.yaml', server=False)
         server = Protocol(file='demo.yaml', server=True)
         data = {'serial': '15984316545'}
-        binary = device.encode(data, 'login')
+        binary = client.encode(data, 'login')
         header, recv = server.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
@@ -430,15 +461,15 @@ report:
             'driver': 1432
         }
         binary = server.encode(data, 'login')
-        header, recv = device.decode(binary)
+        header, recv = client.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
 
     def test_file_json_yaml(self):
-        device = Protocol(file='demo.json', server=False)
+        client = Protocol(file='demo.json', server=False)
         server = Protocol(file='demo.yaml', server=True)
         data = {'serial': '15984316545'}
-        binary = device.encode(data, 'login')
+        binary = client.encode(data, 'login')
         header, recv = server.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
@@ -453,7 +484,7 @@ report:
             'driver': 1432
         }
         binary = server.encode(data, 'login')
-        header, recv = device.decode(binary)
+        header, recv = client.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
 
