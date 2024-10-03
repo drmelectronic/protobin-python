@@ -81,12 +81,15 @@ class FieldBase:
         return binary[1:binary[0] + 1], binary[binary[0] + 1:]
 
 
-class FieldArray(FieldBase):
+class ArrayField(FieldBase):
     length: int
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.array = js['array']
+
+    def __repr__(self):
+        return f'ArrayField<key: {self.key}>'
 
     def decode(self, binary):
         self.length = binary[0]
@@ -116,13 +119,16 @@ class FieldArray(FieldBase):
         return lista, binary
 
 
-class FieldBits(FieldBase):
+class BitsField(FieldBase):
     length: int
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.length = js.get('length', 0)
         self.bytes = math.ceil(self.length / 8)
+
+    def __repr__(self):
+        return f'BitsFIeld<key: {self.key}, length: {self.length}, bytes: {self.bytes}>'
 
     def decode(self, binary):
         self.ensure_length(binary)
@@ -163,9 +169,14 @@ class FieldBits(FieldBase):
         return val
 
 
-class FieldBool(FieldBase):
+class BoolField(FieldBase):
 
-    bytes = 1
+    def __init__(self, k, js):
+        super().__init__(k, js)
+        self.bytes = 1
+
+    def __repr__(self):
+        return f'BoolField<key: {self.key}>'
 
     def to_binary(self, val):
         if val is None:
@@ -185,8 +196,14 @@ class FieldBool(FieldBase):
             return None
 
 
-class FieldChar(FieldBase):
-    bytes = 1
+class CharField(FieldBase):
+
+    def __init__(self, k, js):
+        super().__init__(k, js)
+        self.bytes = 1
+
+    def __repr__(self):
+        return f'CharField<key: {self.key}>'
 
     def to_binary(self, val):
         if val is None:
@@ -197,11 +214,14 @@ class FieldChar(FieldBase):
         return binary[:self.bytes].decode('utf')
 
 
-class FieldDate(FieldBase):
+class DateField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.bytes = 3
+
+    def __repr__(self):
+        return f'DateField<key: {self.key}>'
 
     def to_binary(self, val: datetime.datetime | str):
         if val is None:
@@ -218,20 +238,25 @@ class FieldDate(FieldBase):
         d, binary = self.get_nible(binary)
         m, binary = self.get_nible(binary)
         y, binary = self.get_nible(binary)
+        if y == 0 and m == 1 and d == 1:
+            return None
         return datetime.datetime(2000 + y, m, d).date()
 
 
-class FieldDateTime(FieldBase):
+class DateTimeField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.bytes = 6
 
+    def __repr__(self):
+        return f'DateTimeField<key: {self.key}>'
+
     def to_binary(self, val: datetime.datetime | str):
         if val is None:
             val = datetime.datetime(2000, 1, 1)
         elif not isinstance(val, datetime.datetime):
-                raise ValueError(f'Error en el campo "{self.key}" se espera un datetime pero se recibe {val}')
+                raise ValueError(f'Error in field "{self.key}", a datetime is expected but "{val}" is received')
         elif isinstance(val, str):
             val = datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S').date()
         return bytes([
@@ -250,16 +275,21 @@ class FieldDateTime(FieldBase):
         H, binary = self.get_nible(binary)
         M, binary = self.get_nible(binary)
         S, binary = self.get_nible(binary)
+        if y == 0 and m == 1 and d == 1 and H == 0 and M == 0 and S == 0:
+            return None
         return datetime.datetime(2000 + y, m, d, H, M, S)
 
 
-class FieldFlags(FieldBase):
+class FlagsField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.keys = self.key.split(',')
         self.length = len(self.key)
         self.bytes = math.ceil(self.length / 8)
+
+    def __repr__(self):
+        return f'FlagsField<keys: {self.keys}, length: {self.length}, bytes: {self.bytes}>'
 
     def encode(self, data):
         return self.to_binary(data)
@@ -282,16 +312,19 @@ class FieldFlags(FieldBase):
         for k in self.keys:
             val = data.get(k)
             if val is None:
-                raise ValueError(f'Error en el campo "{self.key}" se espera un boolean pero se recibe None')
+                raise ValueError(f'Error in field "{self.key}", a boolean is expected but "None" is received')
             bits += '1' if data[k] else '0'
         return int(bits, 2).to_bytes(self.bytes, 'big', signed=False)
 
 
-class FieldFloat(FieldBase):
+class FloatField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.decimals = js['decimals']
+
+    def __repr__(self):
+        return f'FloatField<key: {self.key}, bytes: {self.bytes}, decimals: {self.decimals}>'
 
     def from_binary(self, binary):
         val = int.from_bytes(binary[:self.bytes], 'big', signed=True)
@@ -301,7 +334,10 @@ class FieldFloat(FieldBase):
         return int(round(val * (10 ** self.decimals))).to_bytes(self.bytes, 'big', signed=True)
 
 
-class FieldId(FieldBase):
+class IdField(FieldBase):
+
+    def __repr__(self):
+        return f'IdField<key: {self.key}, bytes: {self.bytes}>'
 
     def to_binary(self, val):
         if val is None:
@@ -319,7 +355,10 @@ class FieldId(FieldBase):
         return val
 
 
-class FieldSigned(FieldBase):
+class SignedField(FieldBase):
+
+    def __repr__(self):
+        return f'SignedField<key: {self.key}, bytes: {self.bytes}>'
 
     def to_binary(self, val):
         if val is None:
@@ -333,7 +372,10 @@ class FieldSigned(FieldBase):
         return int.from_bytes(binary, 'big', signed=True)
 
 
-class FieldString(FieldBase):
+class StringField(FieldBase):
+
+    def __repr__(self):
+        return f'StringField<key: {self.key}, bytes: {self.bytes}>'
 
     def to_binary(self, val):
         if self.bytes:
@@ -346,17 +388,27 @@ class FieldString(FieldBase):
         return binary.decode('utf')
 
 
-class FieldTime(FieldBase):
+class TimeField(FieldBase):
 
-    bytes = 2
+    def __init__(self, k, js):
+        super().__init__(k, js)
+        self.bytes = 2
+
+    def __repr__(self):
+        return f'TimeField<key: {self.key}, bytes: {self.bytes}>'
 
     def to_binary(self, val: datetime.datetime | datetime.time | str):
         if val is None:
             val = datetime.time(0, 0)
-        elif not isinstance(val, datetime.datetime) and not isinstance(val, datetime.time):
-                raise ValueError(f'Error en el campo "{self.key}" se espera un datetime o time pero se recibe {val}')
         elif isinstance(val, str):
-            val = datetime.datetime.strptime(val, '%H:%M').date()
+            try:
+                val = datetime.datetime.strptime(val, '%H:%M').time()
+            except:
+                raise ValueError(f'Error in field "{self.key}", a datetime or time is expected but "{val}" is received')
+
+        elif not isinstance(val, datetime.datetime) and not isinstance(val, datetime.time):
+            raise ValueError(f'Error in field "{self.key}", a datetime or time is expected but "{val}" is received')
+
         return bytes([
             self.to_nible(val.hour),
             self.to_nible(val.minute)
@@ -370,11 +422,14 @@ class FieldTime(FieldBase):
         return datetime.time(H, M)
 
 
-class FieldTimestamp(FieldBase):
+class TimestampField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
         self.bytes = 8
+
+    def __repr__(self):
+        return f'TimestampField<key: {self.key}>'
 
     def to_binary(self, val: datetime.datetime | str):
         timestamp = val.timestamp() * 1000000
@@ -385,15 +440,18 @@ class FieldTimestamp(FieldBase):
         return datetime.datetime.fromtimestamp(d / 1000000)
 
 
-class FieldUnsigned(FieldBase):
+class UnsignedField(FieldBase):
+
+    def __repr__(self):
+        return f'UnsignedField<key: {self.key}, bytes: {self.bytes}>'
 
     def to_binary(self, val):
         if val is None:
-            raise ValueError(f'Error en el campo "{self.key}" no se permite None')
+            raise ValueError(f'Error in field "{self.key}", None is not allowed')
         max_value = 256 ** self.bytes - 1
         val = min(val, max_value)
         if val < 0:
-            raise ValueError(f'Error en el campo "{self.key}" se espera enteros positivos y se recibió {val}')
+            raise ValueError(f'Error in field "{self.key}", positive integers expected but "{val}" is received')
         return int(val).to_bytes(self.bytes, 'big', signed=False)
 
     def from_binary(self, binary):
@@ -401,18 +459,18 @@ class FieldUnsigned(FieldBase):
 
 
 FIELD_MAP = {
-    'array': FieldArray,
-    'bits': FieldBits,
-    'bool': FieldBool,
-    'char': FieldChar,
-    'date': FieldDate,
-    'datetime': FieldDateTime,
-    'flags': FieldFlags,
-    'float': FieldFloat,
-    'id': FieldId,
-    'signed': FieldSigned,
-    'string': FieldString,
-    'time': FieldTime,
-    'timestamp': FieldTimestamp,
-    'unsigned': FieldUnsigned,
+    'array': ArrayField,
+    'bits': BitsField,
+    'bool': BoolField,
+    'char': CharField,
+    'date': DateField,
+    'datetime': DateTimeField,
+    'flags': FlagsField,
+    'float': FloatField,
+    'id': IdField,
+    'signed': SignedField,
+    'string': StringField,
+    'time': TimeField,
+    'timestamp': TimestampField,
+    'unsigned': UnsignedField,
 }

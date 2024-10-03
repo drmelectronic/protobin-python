@@ -12,7 +12,11 @@
             "geofence": {"bytes": 2, "type": "id"},
             "state": {"bytes": 1, "type": "char"},
             "trip": {"bytes": 4, "type": "id"},
-            "driver": {"bytes": 4, "type": "id"}
+            "driver": {"bytes": 4, "type": "id"},
+            "order": {"bytes": 1, "type":  "unsigned"},
+            "logged": {"type":  "bool"},
+            "data": {"type":  "datetime"},
+            "schedule": {"type":  "time"}
          }
     },
     "report": {

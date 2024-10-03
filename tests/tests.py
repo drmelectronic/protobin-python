@@ -209,7 +209,7 @@ class BasicTest(unittest.TestCase):
         print('binary', binary)
         h, recv = self.protocol.decode(binary)
         print('recv', recv)
-        self.assertEqual(datetime.datetime(2000, 1, 1), recv['test'])
+        self.assertEqual(None, recv['test'])
 
     def test_time(self):
         data = {'test': datetime.time(15, 23)}
@@ -434,7 +434,11 @@ report:
             'geofence': None,
             'state': 'R',
             'trip': 5681121,
-            'driver': 1432
+            'driver': 1432,
+            'order': 5,
+            'logged': False,
+            'data': None,
+            'schedule': datetime.time(11, 15)
         }
         binary = server.encode(data, 'login')
         print('server', binary)
@@ -451,14 +455,18 @@ report:
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
         data = {
-            'id': 43,
-            'bus_number': 18,
-            'route': 2,
+            'id': 61,
+            'bus_number': 99,
+            'route': 4,
             'direction': True,
             'geofence': None,
-            'state': 'R',
-            'trip': 5681121,
-            'driver': 1432
+            'state': 'T',
+            'trip': 2380,
+            'driver': None,
+            'order': 1,
+            'logged': False,
+            'data': None,
+            'schedule': datetime.time(10, 15)
         }
         binary = server.encode(data, 'login')
         header, recv = client.decode(binary)
@@ -481,7 +489,11 @@ report:
             'geofence': None,
             'state': 'R',
             'trip': 5681121,
-            'driver': 1432
+            'driver': 1432,
+            'order':21,
+            'logged': True,
+            'data': datetime.datetime(2010, 11, 22, 23, 15, 32),
+            'schedule': None
         }
         binary = server.encode(data, 'login')
         header, recv = client.decode(binary)

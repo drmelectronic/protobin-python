@@ -1,7 +1,7 @@
 
 login:
   header: T
-  device:
+  client:
     serial:
       type: string
   server:
@@ -29,9 +29,18 @@ login:
     driver:
       bytes: 4
       type: id
+    order:
+      bytes: 1
+      type: unsigned
+    logged:
+      type: bool
+    data:
+      type: datetime
+    schedule:
+      type: time
 report:
   header: P
-  device:
+  client:
     positions:
       array:
         busstop:

@@ -60,11 +60,11 @@ class Protocol:
 
     def load_format(self, js):
         self.formats = {}
-        for k in js.keys():
-            if js[k]['header'] in self.headers:
-                raise KeyError(f'El header "{js[k]['header']}" ya está en uso en "{self.headers[js[k]["header"]]}"')
-            self.formats[k] = Format(name=k, format=js[k], server=self.server)
-            self.headers[js[k]['header']] = k
+        for name in js.keys():
+            if js[name]['header'] in self.headers:
+                raise KeyError(f'The "{js[name]['header']}" header is already in use at "{self.headers[js[name]["header"]]}"')
+            self.formats[name] = Format(name=name, format=js[name], server=self.server)
+            self.headers[js[name]['header']] = name
 
     def get_format(self, h):
         return self.formats[self.headers[h.decode('utf')]]
@@ -73,6 +73,8 @@ class Protocol:
         return self.formats[format].encode(data)
 
     def decode(self, binary):
-        h, binary = binary.split(b'=')
+        n = binary.find(b'=')
+        h = binary[0:n]
+        binary = binary[n + 1:]
         format = self.get_format(h)
         return format.name, format.decode(binary)
