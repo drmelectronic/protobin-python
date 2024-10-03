@@ -225,7 +225,7 @@ class DateField(FieldBase):
 
     def to_binary(self, val: datetime.datetime | str):
         if val is None:
-            val = datetime.datetime(2000, 1, 1)
+            return bytes([0] * 3)
         elif isinstance(val, str):
             val = datetime.datetime.strptime(val, '%Y-%m-%d').date()
         return bytes([
@@ -238,7 +238,7 @@ class DateField(FieldBase):
         d, binary = self.get_nible(binary)
         m, binary = self.get_nible(binary)
         y, binary = self.get_nible(binary)
-        if y == 0 and m == 1 and d == 1:
+        if y == 0 and m == 0 and d == 0:
             return None
         return datetime.datetime(2000 + y, m, d).date()
 
@@ -254,9 +254,9 @@ class DateTimeField(FieldBase):
 
     def to_binary(self, val: datetime.datetime | str):
         if val is None:
-            val = datetime.datetime(2000, 1, 1)
+            return bytes([0] * 6)
         elif not isinstance(val, datetime.datetime):
-                raise ValueError(f'Error in field "{self.key}", a datetime is expected but "{val}" is received')
+            raise ValueError(f'Error in field "{self.key}", a datetime is expected but "{val}" is received')
         elif isinstance(val, str):
             val = datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S').date()
         return bytes([
@@ -275,7 +275,7 @@ class DateTimeField(FieldBase):
         H, binary = self.get_nible(binary)
         M, binary = self.get_nible(binary)
         S, binary = self.get_nible(binary)
-        if y == 0 and m == 1 and d == 1 and H == 0 and M == 0 and S == 0:
+        if y == 0 and m == 0 and d == 0 and H == 0 and M == 0 and S == 0:
             return None
         return datetime.datetime(2000 + y, m, d, H, M, S)
 
