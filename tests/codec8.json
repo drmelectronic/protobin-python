@@ -1,0 +1,51 @@
+{
+    "crc": {"poly":  "0x18005", "init":  "0x0000", "reverse": true, "byte_order":  "big"},
+    "formats": {
+        "login": {
+            "fields": {
+                "serial": {"type": "string", "length_size": 2}
+            }
+        },
+        "login_status": {
+            "fields": {
+                "bus_number": {"type": "string"},
+                "company": {"type": "string"},
+                "route": {"type": "string"}
+            }
+        },
+        "reports": {
+            "fields": {
+                "reports": {"type": "array", "array": {
+                    "time": {"type": "timestamp", "decimals": 3},
+                    "priority": {"type": "unsigned", "bytes": 1},
+                    "lng": {"type": "float", "bytes": 4, "decimals":  7},
+                    "lat": {"type": "float", "bytes": 4, "decimals":  7},
+                    "alt": {"type": "unsigned", "bytes": 2},
+                    "angle": {"type": "unsigned", "bytes": 2},
+                    "satellites": {"type": "unsigned", "bytes": 1},
+                    "speed": {"type": "unsigned", "bytes": 2},
+                    "event_io": {"type": "unsigned", "bytes": 1},
+                    "#events": {"type": "unsigned", "bytes": 1},
+                    "events1b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 1
+                        }}
+                    },
+                    "events2b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 2}
+                    }},
+                    "events4b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 4}
+                    }},
+                    "events8b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 8}
+                    }},
+                    "#reports": {"type": "unsigned", "bytes": 1}
+                }}
+            }
+        }
+    }
+}

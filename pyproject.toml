@@ -4,12 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "protobin"
-version = "0.0.13"
+version = "0.0.14"
 authors = [
     { name="Daniel Robles", email="drm.electronic@gmail.com" },
 ]
 dependencies = [
-  'PyYAML ~= 6.0'
+    'PyYAML ~= 6.0',
+    'crcmod==1.7'
 ]
 description = "Python library for encode and decode data in protobin format"
 readme = "README.md"

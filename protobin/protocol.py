@@ -1,5 +1,6 @@
 import json
 import yaml
+import crcmod
 from protobin.fields import FieldBase, FIELD_MAP
 
 
@@ -12,7 +13,7 @@ class Format:
         self.name = name
         self.input_fields = []
         self.output_fields = []
-        self.header = format['header']
+        self.header = format.get('header')
         if server is None:
             input_mode = 'fields'
             output_mode = 'fields'
@@ -20,9 +21,14 @@ class Format:
             input_mode = 'client' if server else 'server'
             output_mode = 'server' if server else 'client'
         for k, f in format[input_mode].items():
+            if f['type'] not in FIELD_MAP:
+                raise KeyError(f'Invalid protobin type {f["type"]}')
             self.input_fields.append(FIELD_MAP[f['type']](k, f))
         for k, f in format[output_mode].items():
             self.output_fields.append(FIELD_MAP[f['type']](k, f))
+
+    def __repr__(self):
+        return f'Format: {self.name} <{self.header}>'
 
     def encode(self, data):
         binary = self.header.encode('utf') + b'='
@@ -43,6 +49,8 @@ class Format:
 
 
 class Protocol:
+    crc16 = None
+    crc_byteorder = None
 
     def __init__(self, server: bool = None, file=None, js=None):
         self.server = server
@@ -59,12 +67,17 @@ class Protocol:
             self.load_format(js)
 
     def load_format(self, js):
+        if 'crc' in js:
+            self.config_crc(js['crc'])
+        formats = js['formats']
         self.formats = {}
-        for name in js.keys():
-            if js[name]['header'] in self.headers:
-                raise KeyError(f'The "{js[name]['header']}" header is already in use at "{self.headers[js[name]["header"]]}"')
-            self.formats[name] = Format(name=name, format=js[name], server=self.server)
-            self.headers[js[name]['header']] = name
+        for name in formats.keys():
+            format = formats[name]
+            if format.get('header') in self.headers:
+                raise KeyError(f'The "{format['header']}" header is already in use at "{self.headers[format["header"]]}"')
+            self.formats[name] = Format(name=name, format=format, server=self.server)
+            if 'header' in format:
+               self.headers[format['header']] = name
 
     def get_format(self, h):
         return self.formats[self.headers[h.decode('utf')]]
@@ -72,9 +85,21 @@ class Protocol:
     def encode(self, data, format):
         return self.formats[format].encode(data)
 
-    def decode(self, binary):
-        n = binary.find(b'=')
-        h = binary[0:n]
-        binary = binary[n + 1:]
-        format = self.get_format(h)
-        return format.name, format.decode(binary)
+    def decode(self, binary, codec=None):
+        if codec is None:
+            n = binary.find(b'=')
+            h = binary[0:n]
+            binary = binary[n + 1:]
+            format = self.get_format(h)
+            return format.name, format.decode(binary)
+        format = self.formats[codec]
+        data = format.decode(binary)
+        return data
+
+    def config_crc(self, js):
+        self.crc16 = crcmod.mkCrcFun(int(js['poly'], 16), int(js['init'], 16), js['reverse'])
+        self.crc_byteorder = js['byte_order']
+
+    def get_crc(self, binary):
+        print('crc16', self.crc16(binary).to_bytes(2, byteorder=self.crc_byteorder))
+        return self.crc16(binary)

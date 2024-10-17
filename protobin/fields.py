@@ -86,15 +86,20 @@ class ArrayField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
-        self.array = js['array']
+        fields = []
+        for k, f in js['array'].items():
+            if f['type'] not in FIELD_MAP:
+                raise KeyError(f'Invalid protobin type {f["type"]}')
+            fields.append(FIELD_MAP[f['type']](k, f))
+        self.fields = fields
 
     def __repr__(self):
         return f'ArrayField<key: {self.key}>'
 
     def decode(self, binary):
-        self.length = binary[0]
+        length = binary[0]
         binary = binary[1:]
-        val, binary = self.from_binary(binary)
+        val, binary = self.from_binary(binary, length)
         return val, binary
 
     def to_binary(self, val):
@@ -102,17 +107,15 @@ class ArrayField(FieldBase):
         length = len(val)
         binary += length.to_bytes(1, 'big')
         for i in range(length):
-            fields = [FIELD_MAP[f['type']](k, f) for k, f in self.array.items()]
-            for f in fields:
+            for f in self.fields:
                 binary += f.encode(val[i])
         return binary
 
-    def from_binary(self, binary):
+    def from_binary(self, binary, length):
         lista = []
-        for i in range(self.length):
+        for i in range(length):
             data = {}
-            fields = [FIELD_MAP[f['type']](k, f) for k, f in self.array.items()]
-            for f in fields:
+            for f in self.fields:
                 val, binary = f.decode(binary)
                 data[f.key] = val
             lista.append(data)
@@ -322,6 +325,8 @@ class FloatField(FieldBase):
     def __init__(self, k, js):
         super().__init__(k, js)
         self.decimals = js['decimals']
+        if self.bytes == None:
+            raise ValueError(f'FloatField {self.key} needs to have bytes declared')
 
     def __repr__(self):
         return f'FloatField<key: {self.key}, bytes: {self.bytes}, decimals: {self.decimals}>'
@@ -374,18 +379,28 @@ class SignedField(FieldBase):
 
 class StringField(FieldBase):
 
+    def __init__(self, k, js):
+        super().__init__(k, js)
+        self.length_size = js.get('length_size', 1)
+
     def __repr__(self):
         return f'StringField<key: {self.key}, bytes: {self.bytes}>'
+
+    def from_binary(self, binary):
+        return binary.decode('utf')
+
+    def split(self, binary):
+        if self.bytes:
+            return binary[:self.bytes], binary[self.bytes:]
+        bytes = int.from_bytes(binary[:self.length_size], 'big', signed=False)
+        return binary[self.length_size:bytes + self.length_size], binary[bytes + self.length_size:]
 
     def to_binary(self, val):
         if self.bytes:
             utf = str(val).encode('utf')[:self.bytes]
             return utf
         utf = str(val).encode('utf')[:255]
-        return len(utf).to_bytes(1, 'big') + utf
-
-    def from_binary(self, binary):
-        return binary.decode('utf')
+        return len(utf).to_bytes(self.length_size, 'big') + utf
 
 
 class TimeField(FieldBase):
@@ -399,7 +414,7 @@ class TimeField(FieldBase):
 
     def to_binary(self, val: datetime.datetime | datetime.time | str):
         if val is None:
-            val = datetime.time(0, 0)
+            return bytes([0] * 2)
         elif isinstance(val, str):
             try:
                 val = datetime.datetime.strptime(val, '%H:%M').time()
@@ -427,17 +442,22 @@ class TimestampField(FieldBase):
     def __init__(self, k, js):
         super().__init__(k, js)
         self.bytes = 8
+        self.decimals = js.get('decimals', 6)
 
     def __repr__(self):
         return f'TimestampField<key: {self.key}>'
 
     def to_binary(self, val: datetime.datetime | str):
-        timestamp = val.timestamp() * 1000000
+        if val is None:
+            return bytes([0] * 8)
+        timestamp = val.timestamp() * (10 ** self.decimals)
         return int(timestamp).to_bytes(8, 'big', signed=False)
 
     def from_binary(self, binary):
         d = int.from_bytes(binary, 'big')
-        return datetime.datetime.fromtimestamp(d / 1000000)
+        if d == 0:
+            return None
+        return datetime.datetime.fromtimestamp(d / (10 ** self.decimals))
 
 
 class UnsignedField(FieldBase):

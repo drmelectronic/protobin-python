@@ -65,7 +65,7 @@ DATA = {
 class BasicTest(unittest.TestCase):
 
     def setUp(self):
-        self.protocol = Protocol(js={
+        self.protocol = Protocol(js={'formats': {
             'array': {
                 "header": "A",
                 "fields": {
@@ -129,7 +129,7 @@ class BasicTest(unittest.TestCase):
                 "header": "u",
                 "fields": {'test': {'bytes': 3, 'type': 'unsigned'}}
             }
-        })
+        }})
 
     def test_array(self):
         data = {'test': [
@@ -291,6 +291,12 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_timestamp_null(self):
+        data = {'test': None}
+        binary = self.protocol.encode(data, 'timestamp')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
 
 class AdvancedTest(unittest.TestCase):
 
@@ -303,13 +309,13 @@ class AdvancedTest(unittest.TestCase):
         self.assertEqual(name, 'report')
 
     def test_json(self):
-        protocol = Protocol(js={'medida':
+        protocol = Protocol(js={'formats': {'medida':
             {'header': 'M',
              'fields': {
                 'id': {'bytes': 1, 'type': 'unsigned'},
                 'nombre': {'type': 'string'},
                 'valor': {'bytes': 2, 'type': 'signed'}
-             }}})
+             }}}})
         data = {'id': 2, 'nombre': 'Voltaje', 'valor': -20}
         binary = protocol.encode(data, 'medida')
         h, recv = protocol.decode(binary)
@@ -446,6 +452,13 @@ report:
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
 
+    def test_login_binary(self):
+        client = Protocol(file='demo.json', server=False)
+        binary = b'T=\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        header, recv = client.decode(binary)
+        self.assertEqual(header, 'login')
+        print('recv', recv)
+
     def test_file_yaml(self):
         client = Protocol(file='demo.yaml', server=False)
         server = Protocol(file='demo.yaml', server=True)
@@ -519,3 +532,47 @@ report:
                     "fields": {'test': {'type': 'bits', 'length': 7}}
                 }
             })
+
+    def test_teltonika_login(self):
+        hexdata = '000F333536333037303432343431303133'
+        binary = bytes.fromhex(hexdata)
+        client = Protocol(file='codec8.json', server=None)
+        recv = client.decode(binary, 'login')
+        self.assertEqual(recv, {'serial': '356307042441013'})
+
+    def test_teltonika_position(self):
+        hexdata = '000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
+        binary = bytes.fromhex(hexdata)
+        client = Protocol(file='codec8.json', server=None)
+        length = int.from_bytes(binary[4:8], 'big', signed=False)
+        clean_binary = binary[9:length + 9]
+        crc16 = int.from_bytes(binary[length + 8: length + 12], client.crc_byteorder, signed=False)
+        print('trama', binary[8:length + 8], 'crc', binary[length + 8: length + 12])
+        self.assertEqual(crc16, client.get_crc(binary[8:length + 8]))
+        recv = client.decode(clean_binary, 'reports')
+        self.assertEqual(recv, {'reports': [{
+            'time': datetime.datetime(2019, 6, 10, 5, 4, 46),
+            'priority': 1,
+            'lng': 0.0,
+            'lat': 0.0,
+            'alt': 0,
+            'angle': 0,
+            'satellites': 0,
+            'speed': 0,
+            'event_io': 1,
+            '#events': 5,
+            'events1b': [
+                {'id': 21, 'value': 3},
+                {'id': 1, 'value': 1}
+            ],
+            'events2b': [
+                {'id': 66, 'value': 24079}
+            ],
+            'events4b': [
+                {'id': 241, 'value': 24602}
+            ],
+            'events8b': [
+                {'id': 78, 'value': 0}
+            ],
+            '#reports': 1,
+        }]})

@@ -1,96 +1,96 @@
-
-login:
-  header: T
-  client:
-    serial:
-      type: string
-  server:
-    id:
-      bytes: 2
-      type: id
-    bus_number:
-      bytes: 2
-      type: id
-    route:
-      bytes: 1
-      type: id
-    direction:
-      bytes: 1
-      type: bool
-    geofence:
-      bytes: 2
-      type: id
-    state:
-      bytes: 1
-      type: char
-    trip:
-      bytes: 4
-      type: id
-    driver:
-      bytes: 4
-      type: id
-    order:
-      bytes: 1
-      type: unsigned
-    logged:
-      type: bool
-    data:
-      type: datetime
-    schedule:
-      type: time
-report:
-  header: P
-  client:
-    positions:
-      array:
-        busstop:
-          bytes: 2
-          type: id
-        lat:
-          bytes: 4
-          decimals: 6
-          type: float
-        lng:
-          bytes: 4
-          decimals: 6
-          type: float
-        mark:
-          bytes: 2
-          type: id
-        speed:
-          bytes: 1
-          type: unsigned
-        time:
-          bytes: 6
-          type: datetime
-      bytes: 19
-      type: array
-    trip:
-      bytes: 4
-      type: unsigned
-    route:
-      bytes: 1
-      type: unsigned
-    direction:
-      bytes: 1
-      type: bool
-    state:
-      bytes: 1
-      type: char
-    sales:
-      bytes: 3
-      type: unsigned
-    events:
-      array:
-        id:
-          bytes: 2
-          type: unsigned
-        value:
-          bytes: 1
-          type: unsigned
-      bytes: 3
-      type: array
-  server:
-    positions:
-      bytes: 1
-      type: unsigned
+formats:
+  login:
+    header: T
+    client:
+      serial:
+        type: string
+    server:
+      id:
+        bytes: 2
+        type: id
+      bus_number:
+        bytes: 2
+        type: id
+      route:
+        bytes: 1
+        type: id
+      direction:
+        bytes: 1
+        type: bool
+      geofence:
+        bytes: 2
+        type: id
+      state:
+        bytes: 1
+        type: char
+      trip:
+        bytes: 4
+        type: id
+      driver:
+        bytes: 4
+        type: id
+      order:
+        bytes: 1
+        type: unsigned
+      logged:
+        type: bool
+      data:
+        type: datetime
+      schedule:
+        type: time
+  report:
+    header: P
+    client:
+      positions:
+        array:
+          busstop:
+            bytes: 2
+            type: id
+          lat:
+            bytes: 4
+            decimals: 6
+            type: float
+          lng:
+            bytes: 4
+            decimals: 6
+            type: float
+          mark:
+            bytes: 2
+            type: id
+          speed:
+            bytes: 1
+            type: unsigned
+          time:
+            bytes: 6
+            type: datetime
+        bytes: 19
+        type: array
+      trip:
+        bytes: 4
+        type: unsigned
+      route:
+        bytes: 1
+        type: unsigned
+      direction:
+        bytes: 1
+        type: bool
+      state:
+        bytes: 1
+        type: char
+      sales:
+        bytes: 3
+        type: unsigned
+      events:
+        array:
+          id:
+            bytes: 2
+            type: unsigned
+          value:
+            bytes: 1
+            type: unsigned
+        bytes: 3
+        type: array
+    server:
+      positions:
+        bytes: 1
+        type: unsigned
