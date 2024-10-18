@@ -1,6 +1,8 @@
 import json
 import yaml
 import crcmod
+
+from protobin.errors import InputError, FormatError
 from protobin.fields import FieldBase, FIELD_MAP
 
 
@@ -22,7 +24,7 @@ class Format:
             output_mode = 'server' if server else 'client'
         for k, f in format[input_mode].items():
             if f['type'] not in FIELD_MAP:
-                raise KeyError(f'Invalid protobin type {f["type"]}')
+                raise FormatError(f'Invalid protobin type {f["type"]}')
             self.input_fields.append(FIELD_MAP[f['type']](k, f))
         for k, f in format[output_mode].items():
             self.output_fields.append(FIELD_MAP[f['type']](k, f))
@@ -31,7 +33,9 @@ class Format:
         return f'Format: {self.name} <{self.header}>'
 
     def encode(self, data):
-        binary = self.header.encode('utf') + b'='
+        binary = b''
+        if self.header:
+            binary += self.header.encode('utf') + b'='
         for f in self.output_fields:
             binary += f.encode(data)
         return binary
@@ -74,7 +78,7 @@ class Protocol:
         for name in formats.keys():
             format = formats[name]
             if format.get('header') in self.headers:
-                raise KeyError(f'The "{format['header']}" header is already in use at "{self.headers[format["header"]]}"')
+                raise FormatError(f'The "{format['header']}" header is already in use at "{self.headers[format["header"]]}"')
             self.formats[name] = Format(name=name, format=format, server=self.server)
             if 'header' in format:
                self.headers[format['header']] = name
@@ -83,6 +87,8 @@ class Protocol:
         return self.formats[self.headers[h.decode('utf')]]
 
     def encode(self, data, format):
+        if format not in self.formats:
+            raise InputError(f'{format} is not available format, these are the all availables formats {self.formats.keys()}')
         return self.formats[format].encode(data)
 
     def decode(self, binary, codec=None):

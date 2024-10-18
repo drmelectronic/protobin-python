@@ -3,7 +3,7 @@ import datetime
 import math
 from typing import Union, List
 
-from protobin.errors import ParserError
+from protobin.errors import ParserError, FormatError
 
 
 class FieldEnum(enum.StrEnum):
@@ -48,7 +48,7 @@ class FieldBase:
     def ensure_length(self, binary):
         if self.bytes:
             if len(binary) < self.bytes:
-                raise ParserError('Binary has not enough data')
+                raise ParserError(f'Binary has not enough data for {self}')
 
     def from_binary(self, binary):
         raise NotImplementedError()
@@ -89,7 +89,7 @@ class ArrayField(FieldBase):
         fields = []
         for k, f in js['array'].items():
             if f['type'] not in FIELD_MAP:
-                raise KeyError(f'Invalid protobin type {f["type"]}')
+                raise FormatError(f'Invalid protobin type {f["type"]}')
             fields.append(FIELD_MAP[f['type']](k, f))
         self.fields = fields
 

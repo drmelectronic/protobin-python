@@ -4,6 +4,7 @@ import datetime
 import json
 import yaml
 from protobin import Protocol
+from protobin.errors import InputError, FormatError
 
 DATA = {
         'positions': [
@@ -514,23 +515,24 @@ report:
         self.assertEqual(data, recv)
 
     def test_error_header(self):
-        with self.assertRaises(KeyError) as er:
+        with self.assertRaises(FormatError):
             Protocol(js={
-                'array': {
-                    "header": "A",
-                    "fields": {
-                        'test': {'bytes': 0, 'type': 'array', 'array': {
-                            'test': {'bytes': 0, 'type': 'string'}
-                        }}}
-                },
-                'bits': {
-                    "header": "B",
-                    "fields": {'test': {'type': 'bits'}}
-                },
-                'bits_fixed': {
-                    "header": "B",
-                    "fields": {'test': {'type': 'bits', 'length': 7}}
-                }
+                'formats':
+                    {'array': {
+                        "header": "A",
+                        "fields": {
+                            'test': {'bytes': 0, 'type': 'array', 'array': {
+                                'test': {'bytes': 0, 'type': 'string'}
+                            }}}
+                    },
+                        'bits': {
+                            "header": "B",
+                            "fields": {'test': {'type': 'bits'}}
+                        },
+                        'bits_fixed': {
+                            "header": "B",
+                            "fields": {'test': {'type': 'bits', 'length': 7}}
+                        }}
             })
 
     def test_teltonika_login(self):
@@ -539,6 +541,9 @@ report:
         client = Protocol(file='codec8.json', server=None)
         recv = client.decode(binary, 'login')
         self.assertEqual(recv, {'serial': '356307042441013'})
+        binary2 = client.encode(recv, 'login')
+        self.assertEqual(binary, binary2)
+
 
     def test_teltonika_position(self):
         hexdata = '000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
@@ -576,3 +581,8 @@ report:
             ],
             '#reports': 1,
         }]})
+
+    def test_login_keyerror(self):
+        client = Protocol(file='demo.json', server=False)
+        data = {}
+        client.encode(data, 'not_exist')
