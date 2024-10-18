@@ -465,6 +465,10 @@ class UnsignedField(FieldBase):
     def __repr__(self):
         return f'UnsignedField<key: {self.key}, bytes: {self.bytes}>'
 
+    def encode(self, data):
+        val = data.get(self.key, 0)
+        return self.to_binary(val)
+
     def to_binary(self, val):
         if val is None:
             raise ValueError(f'Error in field "{self.key}", None is not allowed')
