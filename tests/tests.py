@@ -455,7 +455,7 @@ report:
 
     def test_login_binary(self):
         client = Protocol(file='demo.json', server=False)
-        binary = b'T=\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        binary = b'T=\x00\n\x00\x03\x03\x00\x00\x00T\x00\x00\x0b\x8a\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00'
         header, recv = client.decode(binary)
         self.assertEqual(header, 'login')
         print('recv', recv)
@@ -535,7 +535,7 @@ report:
                         }}
             })
 
-    def test_teltonika_login(self):
+    def test_teltonika_login_hex(self):
         hexdata = '000F333536333037303432343431303133'
         binary = bytes.fromhex(hexdata)
         client = Protocol(file='codec8.json', server=None)
@@ -544,8 +544,22 @@ report:
         binary2 = client.encode(recv, 'login')
         self.assertEqual(binary, binary2)
 
+    def test_position_binary(self):
+        data = {'positions':
+                    [{'time': datetime.datetime(2024, 10, 18, 15, 57, 38),
+                      'lng': -77.015533, 'lat': -12.061365, 'speed': 105, 'mark': None, 'busstop': None}],
+                'sales': 0, 'events': [], 'direction': None, 'route': None, 'state': None, 'trip': None
+                }
+        client = Protocol(file='demo.json', server=False)
+        binary = client.encode(data, 'report')
+        binary2 = b'PV=\x01\x18\x10$\x15W8\xfbh\xd6\x13\xffG\xf5Ki\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00'
+        self.assertEqual(binary, binary2)
+        server = Protocol(file='demo.json', server=True)
+        header, recv = server.decode(binary)
+        self.assertEqual(recv, data)
 
-    def test_teltonika_position(self):
+
+    def test_teltonika_position_hex(self):
         hexdata = '000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
         binary = bytes.fromhex(hexdata)
         client = Protocol(file='codec8.json', server=None)
@@ -554,8 +568,8 @@ report:
         crc16 = int.from_bytes(binary[length + 8: length + 12], client.crc_byteorder, signed=False)
         print('trama', binary[8:length + 8], 'crc', binary[length + 8: length + 12])
         self.assertEqual(crc16, client.get_crc(binary[8:length + 8]))
-        recv = client.decode(clean_binary, 'reports')
-        self.assertEqual(recv, {'reports': [{
+        recv = client.decode(clean_binary, 'report')
+        self.assertEqual(recv, {'positions': [{
             'time': datetime.datetime(2019, 6, 10, 5, 4, 46),
             'priority': 1,
             'lng': 0.0,
@@ -585,4 +599,5 @@ report:
     def test_login_keyerror(self):
         client = Protocol(file='demo.json', server=False)
         data = {}
-        client.encode(data, 'not_exist')
+        with self.assertRaises(InputError):
+            client.encode(data, 'not_exist')

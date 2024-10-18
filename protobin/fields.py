@@ -210,10 +210,13 @@ class CharField(FieldBase):
 
     def to_binary(self, val):
         if val is None:
-            return b''
+            return bytes([0])
         return val.encode('utf')
 
     def from_binary(self, binary):
+        val = int.from_bytes(binary[:self.bytes], 'big', signed=False)
+        if val == 0:
+            return None
         return binary[:self.bytes].decode('utf')
 
 

@@ -13,9 +13,9 @@
                 "route": {"type": "string"}
             }
         },
-        "reports": {
+        "report": {
             "fields": {
-                "reports": {"type": "array", "array": {
+                "positions": {"type": "array", "array": {
                     "time": {"type": "timestamp", "decimals": 3},
                     "priority": {"type": "unsigned", "bytes": 1},
                     "lng": {"type": "float", "bytes": 4, "decimals":  7},
