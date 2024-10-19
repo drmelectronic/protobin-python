@@ -560,16 +560,13 @@ report:
 
 
     def test_teltonika_position_hex(self):
-        hexdata = '000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
+        hexdata = '0000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
         binary = bytes.fromhex(hexdata)
         client = Protocol(file='codec8.json', server=None)
-        length = int.from_bytes(binary[4:8], 'big', signed=False)
-        clean_binary = binary[9:length + 9]
-        crc16 = int.from_bytes(binary[length + 8: length + 12], client.crc_byteorder, signed=False)
-        print('trama', binary[8:length + 8], 'crc', binary[length + 8: length + 12])
-        self.assertEqual(crc16, client.get_crc(binary[8:length + 8]))
-        recv = client.decode(clean_binary, 'report')
-        self.assertEqual(recv, {'positions': [{
+        recv = client.decode(binary, 'report')
+        self.assertEqual(recv, {
+            'codec': 8,
+            'positions': [{
             'time': datetime.datetime(2019, 6, 10, 5, 4, 46),
             'priority': 1,
             'lng': 0.0,
@@ -601,3 +598,19 @@ report:
         data = {}
         with self.assertRaises(InputError):
             client.encode(data, 'not_exist')
+
+    def test_no_crc(self):
+        data = {'serial': '359769037211486'}
+        client = Protocol(file='codec8.json')
+        binary = client.encode(data, 'login')
+        self.assertEqual(b'\x00\x0f359769037211486', binary)
+        recv = client.decode(binary, 'login')
+        self.assertEqual(data, recv)
+
+    def test_crc(self):
+        data = {'codec': 8, 'positions': [{'time': datetime.datetime(2024, 10, 19, 9, 37, 57, 555000), 'priority': 1, 'lng': -77.0155334, 'lat': -12.0613651, 'alt': 0, 'angle': 0, 'satellites': 3, 'speed': 105, 'event_io': 0, '#events': 0, 'events1b': [], 'events2b': [], 'events4b': [], 'events8b': [], '#reports': 1}]}
+        client = Protocol(file='codec8.json')
+        binary = client.encode(data, 'report')
+        self.assertEqual(b'\x00\x00\x00!\x08\x01\x00\x00\x01\x92\xa56\xaf\xb3\x01\xd2\x18\\\xba\xf8\xcf\x94\xed\x00\x00\x00\x00\x03\x00i\x00\x00\x00\x00\x00\x00\x01\x00\x00\xa3\xe4', binary)
+        recv = client.decode(binary, 'report')
+        self.assertEqual(data, recv)

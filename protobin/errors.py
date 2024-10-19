@@ -23,3 +23,7 @@ class InputError(BaseError):
 
 class ParserError(BaseError):
     pass
+
+
+class CRCError(BaseError):
+    pass

@@ -2,7 +2,7 @@ import json
 import yaml
 import crcmod
 
-from protobin.errors import InputError, FormatError
+from protobin.errors import InputError, FormatError, CRCError
 from protobin.fields import FieldBase, FIELD_MAP
 
 
@@ -16,6 +16,7 @@ class Format:
         self.input_fields = []
         self.output_fields = []
         self.header = format.get('header')
+        self.crc = format.get('crc', True)
         if server is None:
             input_mode = 'fields'
             output_mode = 'fields'
@@ -55,6 +56,7 @@ class Format:
 class Protocol:
     crc16 = None
     crc_byteorder = None
+    crc_size = 2
 
     def __init__(self, server: bool = None, file=None, js=None):
         self.server = server
@@ -73,6 +75,7 @@ class Protocol:
     def load_format(self, js):
         if 'crc' in js:
             self.config_crc(js['crc'])
+            self.length = js['length']
         formats = js['formats']
         self.formats = {}
         for name in formats.keys():
@@ -86,10 +89,14 @@ class Protocol:
     def get_format(self, h):
         return self.formats[self.headers[h.decode('utf')]]
 
-    def encode(self, data, format):
-        if format not in self.formats:
-            raise InputError(f'{format} is not available format, these are the all availables formats {self.formats.keys()}')
-        return self.formats[format].encode(data)
+    def encode(self, data, format_key):
+        if format_key not in self.formats:
+            raise InputError(f'{format_key} is not available format, these are the all availables formats {self.formats.keys()}')
+        format = self.formats[format_key]
+        binary = format.encode(data)
+        if format.crc and self.crc16:
+            binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary)
+        return binary
 
     def decode(self, binary, codec=None):
         if codec is None:
@@ -97,15 +104,30 @@ class Protocol:
             h = binary[0:n]
             binary = binary[n + 1:]
             format = self.get_format(h)
-            return format.name, format.decode(binary)
-        format = self.formats[codec]
+        else:
+            format = self.formats[codec]
+
+        if format.crc and self.crc16:
+            length = int.from_bytes(binary[:self.length], 'big', signed=False)
+            clean_binary = binary[self.length:length + self.length]
+            crc = binary[length + self.length: length + self.length + self.crc_size]
+            crc_value = int.from_bytes(crc, self.crc_byteorder, signed=False)
+            print('trama', clean_binary, 'crc', crc)
+            if not crc:
+                raise CRCError(f'There is no CRC')
+            elif crc_value != self.crc16(clean_binary):
+                raise CRCError(f'CRC no coincide {crc} != {self.get_crc(clean_binary)}')
+            binary = clean_binary
         data = format.decode(binary)
+        if codec is None:
+            return format.name, data
         return data
 
     def config_crc(self, js):
         self.crc16 = crcmod.mkCrcFun(int(js['poly'], 16), int(js['init'], 16), js['reverse'])
         self.crc_byteorder = js['byte_order']
+        if 'size' in js:
+            self.crc_size = js['size']
 
     def get_crc(self, binary):
-        print('crc16', self.crc16(binary).to_bytes(2, byteorder=self.crc_byteorder))
-        return self.crc16(binary)
+        return self.crc16(binary).to_bytes(self.length, byteorder=self.crc_byteorder)

@@ -1,7 +1,9 @@
 {
-    "crc": {"poly":  "0x18005", "init":  "0x0000", "reverse": true, "byte_order":  "big"},
+    "length": 4,
+    "crc": {"poly":  "0x18005", "init":  "0x0000", "reverse": true, "byte_order":  "big", "size": 4},
     "formats": {
         "login": {
+            "crc": false,
             "fields": {
                 "serial": {"type": "string", "length_size": 2}
             }
@@ -15,6 +17,7 @@
         },
         "report": {
             "fields": {
+                "codec": {"type":  "unsigned", "bytes": 1},
                 "positions": {"type": "array", "array": {
                     "time": {"type": "timestamp", "decimals": 3},
                     "priority": {"type": "unsigned", "bytes": 1},
