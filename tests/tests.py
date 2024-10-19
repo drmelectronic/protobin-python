@@ -611,6 +611,6 @@ report:
         data = {'codec': 8, 'positions': [{'time': datetime.datetime(2024, 10, 19, 9, 37, 57, 555000), 'priority': 1, 'lng': -77.0155334, 'lat': -12.0613651, 'alt': 0, 'angle': 0, 'satellites': 3, 'speed': 105, 'event_io': 0, '#events': 0, 'events1b': [], 'events2b': [], 'events4b': [], 'events8b': [], '#reports': 1}]}
         client = Protocol(file='codec8.json')
         binary = client.encode(data, 'report')
-        self.assertEqual(b'\x00\x00\x00!\x08\x01\x00\x00\x01\x92\xa56\xaf\xb3\x01\xd2\x18\\\xba\xf8\xcf\x94\xed\x00\x00\x00\x00\x03\x00i\x00\x00\x00\x00\x00\x00\x01\x00\x00\xa3\xe4', binary)
+        self.assertEqual(b'\x00\x00\x00\x00\x00\x00\x00!\x08\x01\x00\x00\x01\x92\xa56\xaf\xb3\x01\xd2\x18\\\xba\xf8\xcf\x94\xed\x00\x00\x00\x00\x03\x00i\x00\x00\x00\x00\x00\x00\x01\x00\x00\xa3\xe4', binary)
         recv = client.decode(binary, 'report')
         self.assertEqual(data, recv)

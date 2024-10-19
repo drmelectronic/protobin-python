@@ -112,7 +112,6 @@ class Protocol:
             clean_binary = binary[self.length:length + self.length]
             crc = binary[length + self.length: length + self.length + self.crc_size]
             crc_value = int.from_bytes(crc, self.crc_byteorder, signed=False)
-            print('trama', clean_binary, 'crc', crc)
             if not crc:
                 raise CRCError(f'There is no CRC')
             elif crc_value != self.crc16(clean_binary):
@@ -130,4 +129,4 @@ class Protocol:
             self.crc_size = js['size']
 
     def get_crc(self, binary):
-        return self.crc16(binary).to_bytes(self.length, byteorder=self.crc_byteorder)
+        return self.crc16(binary).to_bytes(self.crc_size, byteorder=self.crc_byteorder)
