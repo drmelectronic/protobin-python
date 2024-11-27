@@ -49,6 +49,36 @@
                     "#reports": {"type": "unsigned", "bytes": 1}
                 }}
             }
+        },
+        "status3": {
+            "header": "s",
+            "fields": {
+                "status": {"type": "char"},
+                "direction": {"type": "char"},
+                "next_next_control": {"type": "string"},
+                "next_next_time": {"type": "string", "bytes": 5},
+                "next_control": {"type": "string"},
+                "next_time": {"type": "string", "bytes": 5},
+                "previous_control": {"type": "string"},
+                "delay": {"type": "signed", "bytes": 1},
+                "front_control": {"type": "string"},
+                "back_control": {"type": "string"},
+                "back_back_control": {"type": "string"},
+                "datero_bus_-1": {"type": "unsigned", "bytes": 2},
+                "datero_dif_-1": {"type": "unsigned", "bytes": 1},
+                "datero_bus_0": {"type": "unsigned", "bytes": 2},
+                "datero_dif_0": {"type": "unsigned", "bytes": 1},
+                "datero_bus_1": {"type": "unsigned", "bytes": 2},
+                "datero_dif_1": {"type": "unsigned", "bytes": 1},
+                "datero_bus_2": {"type": "unsigned", "bytes": 2},
+                "datero_dif_2": {"type": "unsigned", "bytes": 1},
+                "datero_bus_3": {"type": "unsigned", "bytes": 2},
+                "datero_dif_3": {"type": "unsigned", "bytes": 1},
+                "datero_bus_4": {"type": "unsigned", "bytes": 2},
+                "datero_dif_4": {"type": "unsigned", "bytes": 1},
+                "datero_bus_5": {"type": "unsigned", "bytes": 2},
+                "datero_dif_5": {"type": "unsigned", "bytes": 1}
+            }
         }
     }
 }

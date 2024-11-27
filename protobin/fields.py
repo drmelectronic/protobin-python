@@ -103,6 +103,8 @@ class ArrayField(FieldBase):
         return val, binary
 
     def to_binary(self, val):
+        if not isinstance(val, (list, tuple)):
+            raise ValueError(f'Error in field "{self.key}", a array is expected but "{val}" is received, {type(val)}')
         binary = b''
         length = len(val)
         binary += length.to_bytes(1, 'big')
@@ -402,7 +404,10 @@ class StringField(FieldBase):
         if self.bytes:
             utf = str(val).encode('utf')[:self.bytes]
             return utf
-        utf = str(val).encode('utf')[:255]
+        if val is None:
+            utf = b''
+        else:
+            utf = str(val).encode('utf')[:255]
         return len(utf).to_bytes(self.length_size, 'big') + utf
 
 

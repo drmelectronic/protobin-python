@@ -101,26 +101,31 @@ class Protocol:
     def decode(self, binary, codec=None):
         if codec is None:
             n = binary.find(b'=')
+            if n > 4:
+                binary = self.check_crc(binary)
+                n = binary.find(b'=')
             h = binary[0:n]
             binary = binary[n + 1:]
             format = self.get_format(h)
         else:
             format = self.formats[codec]
-
-        if format.crc and self.crc16:
-            length = int.from_bytes(binary[:self.length], 'big', signed=False)
-            clean_binary = binary[self.length:length + self.length]
-            crc = binary[length + self.length: length + self.length + self.crc_size]
-            crc_value = int.from_bytes(crc, self.crc_byteorder, signed=False)
-            if not crc:
-                raise CRCError(f'There is no CRC')
-            elif crc_value != self.crc16(clean_binary):
-                raise CRCError(f'CRC no coincide {crc} != {self.get_crc(clean_binary)}')
-            binary = clean_binary
+            if format.crc and self.crc16:
+                binary = self.check_crc(binary)
         data = format.decode(binary)
         if codec is None:
             return format.name, data
         return data
+
+    def check_crc(self, binary):
+        length = int.from_bytes(binary[:self.length], 'big', signed=False)
+        clean_binary = binary[self.length:length + self.length]
+        crc = binary[length + self.length: length + self.length + self.crc_size]
+        crc_value = int.from_bytes(crc, self.crc_byteorder, signed=False)
+        if not crc:
+            raise CRCError(f'There is no CRC')
+        elif crc_value != self.crc16(clean_binary):
+            raise CRCError(f'CRC no coincide {crc} != {self.get_crc(clean_binary)}')
+        return clean_binary
 
     def config_crc(self, js):
         self.crc16 = crcmod.mkCrcFun(int(js['poly'], 16), int(js['init'], 16), js['reverse'])

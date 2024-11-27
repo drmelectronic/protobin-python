@@ -151,6 +151,11 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_array_none(self):
+        data = {}
+        with self.assertRaises(ValueError):
+            self.protocol.encode(data, 'array')
+
     def test_bits(self):
         data = {'test': [True, False, True, False, False] * 3}
         binary = self.protocol.encode(data, 'bits')
@@ -560,7 +565,7 @@ report:
 
 
     def test_teltonika_position_hex(self):
-        hexdata = '0000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
+        hexdata = '000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
         binary = bytes.fromhex(hexdata)
         client = Protocol(file='codec8.json', server=None)
         recv = client.decode(binary, 'report')
@@ -614,3 +619,20 @@ report:
         self.assertEqual(b'\x00\x00\x00\x00\x00\x00\x00!\x08\x01\x00\x00\x01\x92\xa56\xaf\xb3\x01\xd2\x18\\\xba\xf8\xcf\x94\xed\x00\x00\x00\x00\x03\x00i\x00\x00\x00\x00\x00\x00\x01\x00\x00\xa3\xe4', binary)
         recv = client.decode(binary, 'report')
         self.assertEqual(data, recv)
+
+    def test_status_crc(self):
+        data = {'status': 'E', 'direction': 'A', 'next_next_control': '', 'next_next_time': '     ', 'next_control': '', 'next_time': '     ', 'previous_control': '', 'delay': 0, 'front_control': '', 'back_control': '', 'back_back_control': '', 'datero_bus_-1': 0, 'datero_dif_-1': 0, 'datero_bus_0': 0, 'datero_dif_0': 0, 'datero_bus_1': 0, 'datero_dif_1': 0, 'datero_bus_2': 0, 'datero_dif_2': 0, 'datero_bus_3': 256, 'datero_dif_3': 0, 'datero_bus_4': 0, 'datero_dif_4': 0, 'datero_bus_5': 0, 'datero_dif_5': 0}
+        client = Protocol(file='codec8.json')
+        binary = client.encode(data, 'status3')
+        self.assertEqual(b'\x00\x00\x00\x00\x00\x00\x00*s=EA\x00     \x00     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xb6\xd6', binary)
+        header, recv = client.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_unheader(self):
+        protocol = Protocol(js={'formats': {'report_ack': {
+             'fields': {
+                'positions': {'bytes': 4, 'type': 'unsigned'}
+             }}}})
+        data = {'positions': 1}
+        binary = protocol.encode(data, 'report_ack')
+        self.assertEqual(binary, b'\x00\x00\x00\x01')
