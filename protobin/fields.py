@@ -6,28 +6,28 @@ from typing import Union, List
 from protobin.errors import ParserError, FormatError
 
 
-class FieldEnum(enum.StrEnum):
-    ARRAY = 'array'
-    BITS = 'bits'
-    BOOL = 'bool'
-    CHAR = 'char'
-    DATE = 'date'
-    DATETIME = 'datetime'
-    ID = 'id'
-    FLAGS = 'flags'
-    FLOAT = 'float'
-    SIGNED = 'signed'
-    STRING = 'string'
-    TIME = 'time'
-    TIMESTAMP = 'timestamp'
-    UNSIGNED = 'unsigned'
+# class FieldEnum(enum.StrEnum):
+#     ARRAY = 'array'
+#     BITS = 'bits'
+#     BOOL = 'bool'
+#     CHAR = 'char'
+#     DATE = 'date'
+#     DATETIME = 'datetime'
+#     ID = 'id'
+#     FLAGS = 'flags'
+#     FLOAT = 'float'
+#     SIGNED = 'signed'
+#     STRING = 'string'
+#     TIME = 'time'
+#     TIMESTAMP = 'timestamp'
+#     UNSIGNED = 'unsigned'
 
 
 class FieldBase:
     bytes: int | None
     keys: List[str] | None
     key: str
-    type: FieldEnum
+    # type: FieldEnum
 
     def __init__(self, k, js):
         self.key = k
