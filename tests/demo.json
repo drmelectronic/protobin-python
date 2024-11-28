@@ -60,15 +60,9 @@
                 }
             },
             "server": {
-                "comando": {
-                    "type": "char"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
+                "comando": {"type": "char"},
+                "id": {"type": "string"},
+                "value": {"type": "string"}
             }
         }
     }

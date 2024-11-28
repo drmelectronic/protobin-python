@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "protobin"
-version = "0.0.20"
+version = "0.0.22"
 authors = [
     { name="Daniel Robles", email="drm.electronic@gmail.com" },
 ]
@@ -15,7 +15,7 @@ dependencies = [
 description = "Python library for encode and decode data in protobin format"
 readme = "README.md"
 license = { file="LICENSE.txt" }
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
