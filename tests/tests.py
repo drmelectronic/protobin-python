@@ -530,14 +530,14 @@ report:
                                 'test': {'bytes': 0, 'type': 'string'}
                             }}}
                     },
-                        'bits': {
-                            "header": "B",
-                            "fields": {'test': {'type': 'bits'}}
-                        },
-                        'bits_fixed': {
-                            "header": "B",
-                            "fields": {'test': {'type': 'bits', 'length': 7}}
-                        }}
+                    'bits': {
+                        "header": "B",
+                        "fields": {'test': {'type': 'bits'}}
+                    },
+                    'bits_fixed': {
+                        "header": "B",
+                        "fields": {'test': {'type': 'bits', 'length': 7}}
+                    }}
             })
 
     def test_teltonika_login_hex(self):

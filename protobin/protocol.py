@@ -88,7 +88,7 @@ class Protocol:
         for name in formats.keys():
             format = formats[name]
             if format.get('header') in self.headers:
-                raise FormatError(f'The "{format['header']}" header is already in use at "{self.headers[format["header"]]}"')
+                raise FormatError(f'The \"{format["header"]}\" header is already in use at \"{self.headers[format["header"]]}\"')
             self.formats[name] = Format(name=name, format=format, server=self.server)
             if 'header' in format:
                self.headers[format['header']] = name
