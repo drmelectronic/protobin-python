@@ -16,6 +16,7 @@ class Format:
         self.input_fields = []
         self.output_fields = []
         self.header = format.get('header')
+        self.codec = format.get('codec')
         self.crc = format.get('crc', True)
         if server is None:
             input_mode = 'fields'
@@ -31,12 +32,17 @@ class Format:
             self.output_fields.append(FIELD_MAP[f['type']](k, f))
 
     def __repr__(self):
-        return f'Format: {self.name} <{self.header}>'
+        if self.header:
+            return f'Format: {self.name} <{self.header}>'
+        elif self.codec:
+            return f'Format: {self.name} <{self.codec}>'
 
     def encode(self, data):
         binary = b''
         if self.header:
             binary += self.header.encode('utf') + b'='
+        elif self.codec:
+            binary += self.codec.to_bytes()
         for f in self.output_fields:
             binary += f.encode(data)
         return binary
@@ -61,6 +67,7 @@ class Protocol:
     def __init__(self, server: bool = None, file=None, js=None):
         self.server = server
         self.headers = {}
+        self.codecs = {}
         if file:
             with open(file, 'r') as f:
                 if 'json' in file:
@@ -85,9 +92,14 @@ class Protocol:
             self.formats[name] = Format(name=name, format=format, server=self.server)
             if 'header' in format:
                self.headers[format['header']] = name
+            if 'codec' in format:
+               self.codecs[format['codec']] = name
 
     def get_format(self, h):
         return self.formats[self.headers[h.decode('utf')]]
+
+    def get_codec(self, h):
+        return self.formats[self.codecs[int.from_bytes(h)]]
 
     def encode(self, data, format_key):
         if format_key not in self.formats:
@@ -101,12 +113,18 @@ class Protocol:
     def decode(self, binary, codec=None):
         if codec is None:
             n = binary.find(b'=')
-            if n > 4:
+            if n == -1:
                 binary = self.check_crc(binary)
-                n = binary.find(b'=')
-            h = binary[0:n]
-            binary = binary[n + 1:]
-            format = self.get_format(h)
+                h = binary[:1]
+                binary = binary[1:]
+                format = self.get_codec(h)
+            else:
+                if n > 4:
+                    binary = self.check_crc(binary)
+                    n = binary.find(b'=')
+                h = binary[0:n]
+                binary = binary[n + 1:]
+                format = self.get_format(h)
         else:
             format = self.formats[codec]
             if format.crc and self.crc16:

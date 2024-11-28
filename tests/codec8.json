@@ -16,8 +16,8 @@
             }
         },
         "report": {
+            "codec": 8,
             "fields": {
-                "codec": {"type":  "unsigned", "bytes": 1},
                 "positions": {"type": "array", "array": {
                     "time": {"type": "timestamp", "decimals": 3},
                     "priority": {"type": "unsigned", "bytes": 1},
