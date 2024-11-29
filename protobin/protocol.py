@@ -42,7 +42,9 @@ class Format:
         if self.header:
             binary += self.header.encode('utf') + b'='
         elif self.codec:
-            binary += self.codec.to_bytes()
+            # added for python 3.8
+            # binary += self.codec.to_bytes()
+            binary += self.codec.to_bytes(1, 'big')
         for f in self.output_fields:
             binary += f.encode(data)
         return binary
@@ -99,7 +101,9 @@ class Protocol:
         return self.formats[self.headers[h.decode('utf')]]
 
     def get_codec(self, h):
-        return self.formats[self.codecs[int.from_bytes(h)]]
+        # added for python 3.8
+        # return self.formats[self.codecs[int.from_bytes(h)]]
+        return self.formats[self.codecs[int.from_bytes(h, 'big')]]
 
     def encode(self, data, format_key):
         if format_key not in self.formats:

@@ -563,7 +563,6 @@ report:
         header, recv = server.decode(binary)
         self.assertEqual(recv, data)
 
-
     def test_teltonika_position_hex(self):
         hexdata = '000000000000003608010000016B40D8EA30010000000000000000000000000000000105021503010101425E0F01F10000601A014E0000000000000000010000C7CF'
         binary = bytes.fromhex(hexdata)

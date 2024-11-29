@@ -6,6 +6,7 @@ from typing import Union, List
 from protobin.errors import ParserError, FormatError
 
 
+# removed for python 3.8
 # class FieldEnum(enum.StrEnum):
 #     ARRAY = 'array'
 #     BITS = 'bits'
@@ -24,9 +25,10 @@ from protobin.errors import ParserError, FormatError
 
 
 class FieldBase:
-    bytes: int | None
-    keys: List[str] | None
-    key: str
+    # removed for python 3.8
+    # bytes: int | None
+    # keys: List[str] | None
+    # key: str
     # type: FieldEnum
 
     def __init__(self, k, js):
@@ -231,7 +233,9 @@ class DateField(FieldBase):
     def __repr__(self):
         return f'DateField<key: {self.key}>'
 
-    def to_binary(self, val: datetime.datetime | str):
+    # removed for python 3.8
+    # def to_binary(self, val: datetime.datetime | str):
+    def to_binary(self, val):
         if val is None:
             return bytes([0] * 3)
         elif isinstance(val, str):
@@ -260,7 +264,9 @@ class DateTimeField(FieldBase):
     def __repr__(self):
         return f'DateTimeField<key: {self.key}>'
 
-    def to_binary(self, val: datetime.datetime | str):
+    # removed for python 3.8
+    # def to_binary(self, val: datetime.datetime | str):
+    def to_binary(self, val):
         if val is None:
             return bytes([0] * 6)
         elif not isinstance(val, datetime.datetime):
@@ -420,7 +426,9 @@ class TimeField(FieldBase):
     def __repr__(self):
         return f'TimeField<key: {self.key}, bytes: {self.bytes}>'
 
-    def to_binary(self, val: datetime.datetime | datetime.time | str):
+    # removed for python 3.8
+    # def to_binary(self, val: datetime.datetime | datetime.time | str):
+    def to_binary(self, val):
         if val is None:
             return bytes([0] * 2)
         elif isinstance(val, str):
@@ -455,7 +463,9 @@ class TimestampField(FieldBase):
     def __repr__(self):
         return f'TimestampField<key: {self.key}>'
 
-    def to_binary(self, val: datetime.datetime | str):
+    # removed for python 3.8
+    # def to_binary(self, val: datetime.datetime | str):
+    def to_binary(self, val):
         if val is None:
             return bytes([0] * 8)
         timestamp = val.timestamp() * (10 ** self.decimals)
