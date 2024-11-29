@@ -570,31 +570,32 @@ report:
         header, recv = client.decode(binary)
         self.assertEqual(recv, {
             'positions': [{
-            'time': datetime.datetime(2019, 6, 10, 5, 4, 46),
-            'priority': 1,
-            'lng': 0.0,
-            'lat': 0.0,
-            'alt': 0,
-            'angle': 0,
-            'satellites': 0,
-            'speed': 0,
-            'event_io': 1,
-            '#events': 5,
-            'events1b': [
-                {'id': 21, 'value': 3},
-                {'id': 1, 'value': 1}
+                'time': datetime.datetime(2019, 6, 10, 5, 4, 46),
+                'priority': 1,
+                'lng': 0.0,
+                'lat': 0.0,
+                'alt': 0,
+                'angle': 0,
+                'satellites': 0,
+                'speed': 0,
+                'event_io': 1,
+                '#events': 5,
+                'events1b': [
+                    {'id': 21, 'value': 3},
+                    {'id': 1, 'value': 1}
+                ],
+                'events2b': [
+                    {'id': 66, 'value': 24079}
+                ],
+                'events4b': [
+                    {'id': 241, 'value': 24602}
+                ],
+                'events8b': [
+                    {'id': 78, 'value': 0}
+                ]}
             ],
-            'events2b': [
-                {'id': 66, 'value': 24079}
-            ],
-            'events4b': [
-                {'id': 241, 'value': 24602}
-            ],
-            'events8b': [
-                {'id': 78, 'value': 0}
-            ],
-            '#reports': 1,
-        }]})
+            '#reports': 1
+        })
 
     def test_login_keyerror(self):
         client = Protocol(file='demo.json', server=False)
@@ -611,7 +612,7 @@ report:
         self.assertEqual(data, recv)
 
     def test_crc(self):
-        data = {'positions': [{'time': datetime.datetime(2024, 10, 19, 9, 37, 57, 555000), 'priority': 1, 'lng': -77.0155334, 'lat': -12.0613651, 'alt': 0, 'angle': 0, 'satellites': 3, 'speed': 105, 'event_io': 0, '#events': 0, 'events1b': [], 'events2b': [], 'events4b': [], 'events8b': [], '#reports': 1}]}
+        data = {'positions': [{'time': datetime.datetime(2024, 10, 19, 9, 37, 57, 555000), 'priority': 1, 'lng': -77.0155334, 'lat': -12.0613651, 'alt': 0, 'angle': 0, 'satellites': 3, 'speed': 105, 'event_io': 0, '#events': 0, 'events1b': [], 'events2b': [], 'events4b': [], 'events8b': []}], '#reports': 1}
         client = Protocol(file='codec8.json')
         binary = client.encode(data, 'report')
         self.assertEqual(b'\x00\x00\x00\x00\x00\x00\x00!\x08\x01\x00\x00\x01\x92\xa56\xaf\xb3\x01\xd2\x18\\\xba\xf8\xcf\x94\xed\x00\x00\x00\x00\x03\x00i\x00\x00\x00\x00\x00\x00\x01\x00\x00\xa3\xe4', binary)
@@ -634,3 +635,10 @@ report:
         data = {'positions': 1}
         binary = protocol.encode(data, 'report_ack')
         self.assertEqual(binary, b'\x00\x00\x00\x01')
+
+    def test_decode_codec8(self):
+        # binary = b'\xfe\x0f350424068858891\x00\x00\x01\x06CBF541\x04\x00\x02R\x00\x00\x00\x00\x01\x00\x00\x1e\n\x04\x00)\x11$\x100\x00R\xff\x00\x00\x00\x02'
+        binary = b'\x00\x00\x00\x00\x00\x00\x01\x11\x08\t\x00\x00\x01\x93x\xd74\xf0\x00\xd2\x15\x19\xe6\xf8\xc6\xe8\x9e\x00Z\x01b\x0e\x00\r\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd7_\xe8\x00\xd2\x15\x1b#\xf8\xc6\xfau\x00W\x00\x06\x0f\x00\x0e\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd7\x86\xf8\x00\xd2\x15\x19\xf7\xf8\xc7\x0c~\x00S\x01e\x10\x00\x14\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd7\xd5\x18\x00\xd2\x15\x19\xf7\xf8\xc7\x14=\x00U\x00\x02\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd8#8\x00\xd2\x15\x19\xf7\xf8\xc7\x14=\x00U\x00\x02\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd8qX\x00\xd2\x15\x19\xf7\xf8\xc7\x14=\x00U\x00\x02\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd8\xb3\xc0\x00\xd2\x15\x1bU\xf8\xc7%\xe2\x00R\x01g\x10\x00\x19\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd8\xcf\x18\x00\xd2\x15\x1a\xe0\xf8\xc79\x8b\x00T\x01g\x0f\x00\x17\x00\x00\x00\x00\x00\x00\x00\x00\x01\x93x\xd8\xeeX\x00\xd2\x15\x1al\xf8\xc7K\x1f\x00Y\x00\x01\x0e\x00\x17\x00\x00\x00\x00\x00\x00\t\x00\x00\x13x'
+        client = Protocol(file='codec8.json')
+        header, recv = client.decode(binary)
+        print(header, recv)

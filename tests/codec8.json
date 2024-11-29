@@ -45,9 +45,9 @@
                     "events8b": {"type": "array", "array": {
                         "id": {"type": "id", "bytes": 1},
                         "value": {"type": "unsigned", "bytes": 8}
-                    }},
-                    "#reports": {"type": "unsigned", "bytes": 1}
-                }}
+                    }}
+                }},
+                "#reports": {"type": "unsigned", "bytes": 1}
             }
         },
         "status3": {

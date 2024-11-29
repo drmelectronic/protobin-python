@@ -114,21 +114,30 @@ class Protocol:
             binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary)
         return binary
 
+    def get_header(self, binary):
+        n = binary.find(b'=')
+        if n == -1:
+            binary = self.check_crc(binary)
+            h = binary[:1]
+            binary = binary[1:]
+            format = self.get_codec(h)
+        else:
+            if n > 4:
+                binary = self.check_crc(binary)
+                n = binary.find(b'=')
+                if n > 4:
+                    h = binary[:1]
+                    binary = binary[1:]
+                    format = self.get_codec(h)
+                    return format, binary
+            h = binary[0:n]
+            binary = binary[n + 1:]
+            format = self.get_format(h)
+        return format, binary
+
     def decode(self, binary, codec=None):
         if codec is None:
-            n = binary.find(b'=')
-            if n == -1:
-                binary = self.check_crc(binary)
-                h = binary[:1]
-                binary = binary[1:]
-                format = self.get_codec(h)
-            else:
-                if n > 4:
-                    binary = self.check_crc(binary)
-                    n = binary.find(b'=')
-                h = binary[0:n]
-                binary = binary[n + 1:]
-                format = self.get_format(h)
+            format, binary = self.get_header(binary)
         else:
             format = self.formats[codec]
             if format.crc and self.crc16:
