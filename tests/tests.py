@@ -646,9 +646,11 @@ report:
         print(header, recv)
 
     def test_singleton(self):
-        loader = ProtobinLoader()
-        loader.get('codec8.json')
-        loader.get('codec8.json')
-        loader.get('codec8.json')
-        loader.get('codec8.json')
-        loader.get('codec8.json')
+        protocol1 = ProtobinLoader('codec8.json')
+        protocol2 = ProtobinLoader('codec8.json')
+        protocol3 = ProtobinLoader('codec8.json')
+        protocol4 = ProtobinLoader('codec8.json')
+        protocol5 = ProtobinLoader('demo.json', server=False)
+        protocol6 = ProtobinLoader('demo.json', server=True)
+        protocol7 = ProtobinLoader('demo.json', server=True)
+        protocol8 = ProtobinLoader('demo.json', server=True)
