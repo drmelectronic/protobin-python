@@ -125,7 +125,7 @@ class Protocol:
             if n > 4:
                 binary = self.check_crc(binary)
                 n = binary.find(b'=')
-                if n > 4:
+                if n > 4 or n == -1:
                     h = binary[:1]
                     binary = binary[1:]
                     format = self.get_codec(h)
