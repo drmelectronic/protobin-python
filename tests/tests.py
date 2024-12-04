@@ -5,6 +5,7 @@ import json
 import yaml
 from protobin import Protocol
 from protobin.errors import InputError, FormatError
+from protobin.singleton import ProtobinLoader
 
 DATA = {
         'positions': [
@@ -643,3 +644,11 @@ report:
         client = Protocol(file='codec8.json')
         header, recv = client.decode(binary)
         print(header, recv)
+
+    def test_singleton(self):
+        loader = ProtobinLoader()
+        loader.get('codec8.json')
+        loader.get('codec8.json')
+        loader.get('codec8.json')
+        loader.get('codec8.json')
+        loader.get('codec8.json')
