@@ -5,7 +5,7 @@ import json
 import yaml
 from protobin import Protocol
 from protobin.errors import InputError, FormatError
-from protobin.singleton import ProtobinLoader
+from protobin import ProtobinLoader
 
 DATA = {
         'positions': [
