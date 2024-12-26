@@ -25,6 +25,8 @@ class Format:
             input_mode = 'client' if server else 'server'
             output_mode = 'server' if server else 'client'
         for k, f in format[input_mode].items():
+            if 'type' not in f:
+                raise FormatError(f'Not found type in field {k} of format {name}')
             if f['type'] not in FIELD_MAP:
                 raise FormatError(f'Invalid protobin type {f["type"]}')
             self.input_fields.append(FIELD_MAP[f['type']](k, f))

@@ -451,10 +451,10 @@ report:
             'order': 5,
             'logged': False,
             'data': None,
-            'schedule': datetime.time(11, 15)
+            'schedule': None
         }
         binary = server.encode(data, 'login')
-        print('server', binary)
+        print(f'server ({len(binary)})', binary)
         header, recv = client.decode(binary)
         self.assertEqual(header, 'login')
         self.assertEqual(data, recv)
@@ -645,6 +645,22 @@ report:
         header, recv = client.decode(binary)
         print(header, recv)
 
+    def test_decode_sergio(self):
+        val = {'id': '675882972c030d7f86188ee9', 'command': 'C', 'value': 'value'}
+        client = Protocol(js={"formats": {"command": {
+            "header": "$",
+            "server": {
+                "comando": {"bytes": 1, "type": "char"},
+                "id": {"bytes": 0, "type": "string"},
+                "value": {"bytes": 0, "type": "string"}
+            },
+            "client": {
+                "id": {"bytes": 0, "type": "string"}
+            }
+        }}}, server=True)
+        binary = client.encode(val, 'command')
+        print(binary)
+
     def test_singleton(self):
         protocol1 = ProtobinLoader('codec8.json')
         protocol2 = ProtobinLoader('codec8.json')
@@ -654,3 +670,17 @@ report:
         protocol6 = ProtobinLoader('demo.json', server=True)
         protocol7 = ProtobinLoader('demo.json', server=True)
         protocol8 = ProtobinLoader('demo.json', server=True)
+
+    def test_error_type(self):
+        with self.assertRaises(FormatError):
+            Protocol(js={"formats": {"command": {
+                "header": "$",
+                "server": {
+                    "comando": {"bytes": 1, "type": "char"},
+                    "id": {"bytes": 0, "type": "string"},
+                    "value": {"bytes": 0, "type": "string"}
+                },
+                "client": {
+                    "id": {"bytes": 0}
+                }
+            }}}, server=True)
