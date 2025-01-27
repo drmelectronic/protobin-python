@@ -1,0 +1,150 @@
+{
+    "length": 8,
+    "crc": {"poly":  "0x18005", "init":  "0x0000", "reverse": true, "byte_order":  "big", "size":  4},
+    "formats": {
+        "login": {
+            "crc": false,
+            "fields": {
+                "serial": {"type": "string", "length_size": 2}
+            }
+        },
+        "login_status": {
+            "crc": false,
+            "header": "P",
+            "fields": {
+                "bus_number": {"type": "string"},
+                "company": {"type": "string"},
+                "route": {"type": "string"}
+            }
+        },
+        "report": {
+            "codec": 8,
+            "fields": {
+                "positions": {"type": "array", "array": {
+                    "time": {"type": "timestamp", "decimals": 3},
+                    "priority": {"type": "unsigned", "bytes": 1},
+                    "lng": {"type": "float", "bytes": 4, "decimals":  7},
+                    "lat": {"type": "float", "bytes": 4, "decimals":  7},
+                    "alt": {"type": "unsigned", "bytes": 2},
+                    "angle": {"type": "unsigned", "bytes": 2},
+                    "satellites": {"type": "unsigned", "bytes": 1},
+                    "speed": {"type": "unsigned", "bytes": 2},
+                    "event_io": {"type": "unsigned", "bytes": 1},
+                    "#events": {"type": "unsigned", "bytes": 1},
+                    "events1b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 1
+                        }}
+                    },
+                    "events2b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 2}
+                    }},
+                    "events4b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 4}
+                    }},
+                    "events8b": {"type": "array", "array": {
+                        "id": {"type": "id", "bytes": 1},
+                        "value": {"type": "unsigned", "bytes": 8}
+                    }}
+                }},
+                "#reports": {"type": "unsigned", "bytes": 1}
+            }
+        },
+        "report_ack": {
+            "crc": false,
+            "fields": {
+                "positions": {"bytes": 4, "type": "unsigned"}
+            }
+        },
+        "STATUS": {
+            "crc": false,
+            "header": "ST",
+            "fields": {
+                "status": {"type": "char"},
+                "direction": {"type": "char"},
+                "next_control": {"type": "string"},
+                "next_time": {"type": "string", "bytes": 5},
+                "previous_control": {"type": "string"},
+                "delay": {"type": "signed", "bytes": 1},
+                "back_control": {"type": "string"},
+                "datero_bus_0": {"type": "unsigned", "bytes": 2},
+                "datero_dif_0": {"type": "unsigned", "bytes": 1},
+                "datero_bus_1": {"type": "unsigned", "bytes": 2},
+                "datero_dif_1": {"type": "unsigned", "bytes": 1},
+                "datero_bus_2": {"type": "unsigned", "bytes": 2},
+                "datero_dif_2": {"type": "unsigned", "bytes": 1},
+                "datero_bus_3": {"type": "unsigned", "bytes": 2},
+                "datero_dif_3": {"type": "unsigned", "bytes": 1},
+                "datero_bus_4": {"type": "unsigned", "bytes": 2},
+                "datero_dif_4": {"type": "unsigned", "bytes": 1},
+                "datero_bus_5": {"type": "unsigned", "bytes": 2},
+                "datero_dif_5": {"type": "unsigned", "bytes": 1}
+            }
+        },
+        "status1": {
+            "header": "S",
+            "fields": {
+                "status": {"type": "char"},
+                "direction": {"type": "char"},
+                "next_control": {"type": "string"},
+                "next_time": {"type": "string", "bytes": 5},
+                "previous_control": {"type": "string"},
+                "delay": {"type": "signed", "bytes": 1},
+                "back_control": {"type": "string"},
+                "datero_bus_0": {"type": "unsigned", "bytes": 2},
+                "datero_dif_0": {"type": "unsigned", "bytes": 1},
+                "datero_bus_1": {"type": "unsigned", "bytes": 2},
+                "datero_dif_1": {"type": "unsigned", "bytes": 1},
+                "datero_bus_2": {"type": "unsigned", "bytes": 2},
+                "datero_dif_2": {"type": "unsigned", "bytes": 1},
+                "datero_bus_3": {"type": "unsigned", "bytes": 2},
+                "datero_dif_3": {"type": "unsigned", "bytes": 1},
+                "datero_bus_4": {"type": "unsigned", "bytes": 2},
+                "datero_dif_4": {"type": "unsigned", "bytes": 1},
+                "datero_bus_5": {"type": "unsigned", "bytes": 2},
+                "datero_dif_5": {"type": "unsigned", "bytes": 1}
+            }
+        },
+        "status3": {
+            "header": "s",
+            "fields": {
+                "status": {"type": "char"},
+                "direction": {"type": "char"},
+                "next_next_control": {"type": "string"},
+                "next_next_time": {"type": "string", "bytes": 5},
+                "next_control": {"type": "string"},
+                "next_time": {"type": "string", "bytes": 5},
+                "previous_control": {"type": "string"},
+                "delay": {"type": "signed", "bytes": 1},
+                "front_control": {"type": "string"},
+                "back_control": {"type": "string"},
+                "back_back_control": {"type": "string"},
+                "datero_bus_-1": {"type": "unsigned", "bytes": 2},
+                "datero_dif_-1": {"type": "unsigned", "bytes": 1},
+                "datero_bus_0": {"type": "unsigned", "bytes": 2},
+                "datero_dif_0": {"type": "unsigned", "bytes": 1},
+                "datero_bus_1": {"type": "unsigned", "bytes": 2},
+                "datero_dif_1": {"type": "unsigned", "bytes": 1},
+                "datero_bus_2": {"type": "unsigned", "bytes": 2},
+                "datero_dif_2": {"type": "unsigned", "bytes": 1},
+                "datero_bus_3": {"type": "unsigned", "bytes": 2},
+                "datero_dif_3": {"type": "unsigned", "bytes": 1},
+                "datero_bus_4": {"type": "unsigned", "bytes": 2},
+                "datero_dif_4": {"type": "unsigned", "bytes": 1},
+                "datero_bus_5": {"type": "unsigned", "bytes": 2},
+                "datero_dif_5": {"type": "unsigned", "bytes": 1}
+            }
+        },
+        "command": {
+            "codec": 12,
+            "fields": {
+                "commands": {"type": "array", "array": {
+                    "value": {"type": "string"}
+                }},
+                "#commands": {"bytes": 1, "type": "unsigned"}
+            }
+        }
+    }
+}

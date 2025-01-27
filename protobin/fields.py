@@ -433,7 +433,10 @@ class TimeField(FieldBase):
             return bytes([0] * 2)
         elif isinstance(val, str):
             try:
-                val = datetime.datetime.strptime(val, '%H:%M').time()
+                if len(val) > 5:
+                    val = datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S').time()
+                else:
+                    val = datetime.datetime.strptime(val, '%H:%M').time()
             except:
                 raise ValueError(f'Error in field "{self.key}", a datetime or time is expected but "{val}" is received')
 
