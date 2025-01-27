@@ -91,6 +91,10 @@ class BasicTest(unittest.TestCase):
                 "header": "C",
                 "fields": {'test': {'bytes': 1, 'type': 'char'}}
             },
+            'char2': {
+                "header": "C2",
+                "fields": {'test': {'bytes': 2, 'type': 'char'}}
+            },
             'date': {
                 "header": "D",
                 "fields": {'test': {'bytes': 1, 'type': 'date'}}
@@ -188,6 +192,12 @@ class BasicTest(unittest.TestCase):
     def test_char(self):
         data = {'test': 'F'}
         binary = self.protocol.encode(data, 'char')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_char2(self):
+        data = {'test': 'FA'}
+        binary = self.protocol.encode(data, 'char2')
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 

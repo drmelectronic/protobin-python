@@ -207,7 +207,7 @@ class CharField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
-        self.bytes = 1
+        self.bytes = js.get('bytes', 1)
 
     def __repr__(self):
         return f'CharField<key: {self.key}>'
