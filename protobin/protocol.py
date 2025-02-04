@@ -18,6 +18,7 @@ class Format:
         self.header = format.get('header')
         self.codec = format.get('codec')
         self.crc = format.get('crc', True)
+        self.crc_size = format.get('crc_size')
         if server is None:
             input_mode = 'fields'
             output_mode = 'fields'
@@ -115,9 +116,9 @@ class Protocol:
         format = self.formats[format_key]
         binary = format.encode(data)
         if self.fake_prefix and format.header:
-            binary = binary + self.get_crc(binary)
+            binary = binary + self.get_crc(binary, format.crc_size)
         elif format.crc and self.crc16:
-            binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary)
+            binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary, format.crc_size)
 
         return binary
 
@@ -171,7 +172,7 @@ class Protocol:
         if not crc:
             raise CRCError(f'There is no CRC')
         elif crc_value != self.crc16(clean_binary):
-            raise CRCError(f'CRC no coincide {crc} != {self.get_crc(clean_binary)}')
+            raise CRCError(f'CRC no coincide {crc} != {self.get_crc(clean_binary, None)}')
         return clean_binary
 
     def config_crc(self, js):
@@ -180,5 +181,7 @@ class Protocol:
         if 'size' in js:
             self.crc_size = js['size']
 
-    def get_crc(self, binary):
-        return self.crc16(binary).to_bytes(self.crc_size, byteorder=self.crc_byteorder)
+    def get_crc(self, binary, crc_size):
+        if crc_size is None:
+            crc_size = self.crc_size
+        return self.crc16(binary).to_bytes(crc_size, byteorder=self.crc_byteorder)

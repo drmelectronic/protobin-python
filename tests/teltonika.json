@@ -11,6 +11,7 @@
         },
         "login_status": {
             "crc": false,
+            "crc_size": 2,
             "header": "P",
             "fields": {
                 "bus_number": {"type": "string"},
