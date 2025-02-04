@@ -115,7 +115,7 @@ class Protocol:
         format = self.formats[format_key]
         binary = format.encode(data)
         if self.fake_prefix and format.header:
-            binary = bytes(self.fake_prefix) + binary + self.get_crc(binary)
+            binary = binary + self.get_crc(binary)
         elif format.crc and self.crc16:
             binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary)
 
@@ -132,12 +132,12 @@ class Protocol:
         else:
             if n > 4:
                 # comandos de pantalla con = o que tengan un igual más adelante por casualidad
-                if self.fake_prefix and binary[:4] == bytes(self.fake_prefix):
-                    # comandos
-                    binary = binary[4:]
-                else:
-                    # codec8
-                    binary = self.check_crc(binary)
+                # if self.fake_prefix and int.from_bytes(binary[:self.fake_prefix - 1]) and binary[self.fake_prefix - 1]:
+                #     # comandos
+                #     binary = binary[4:]
+                # else:
+                #     # codec8
+                binary = self.check_crc(binary)
                 n = binary.find(b'=')
                 if n > 4 or n == -1:
                     # si el igual está adelante no es parte del comando
