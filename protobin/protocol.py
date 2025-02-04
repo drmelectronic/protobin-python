@@ -114,7 +114,7 @@ class Protocol:
             raise InputError(f'{format_key} is not available format, these are the all availables formats {self.formats.keys()}')
         format = self.formats[format_key]
         binary = format.encode(data)
-        if self.fake_prefix:
+        if self.fake_prefix and format.header:
             binary = bytes(self.fake_prefix) + binary + self.get_crc(binary)
         elif format.crc and self.crc16:
             binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary)

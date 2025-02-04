@@ -569,6 +569,7 @@ report:
         self.assertEqual(recv, {'serial': '356307042441013'})
         binary2 = client.encode(recv, 'login')
         self.assertEqual(binary, binary2)
+        print(binary2)
 
     def test_position_binary(self):
         data = {'positions':
@@ -644,7 +645,7 @@ report:
         data = {'status': 'E', 'direction': 'A', 'next_next_control': '', 'next_next_time': '     ', 'next_control': '', 'next_time': '     ', 'previous_control': '', 'delay': 0, 'front_control': '', 'back_control': '', 'back_back_control': '', 'datero_bus_-1': 0, 'datero_dif_-1': 0, 'datero_bus_0': 0, 'datero_dif_0': 0, 'datero_bus_1': 0, 'datero_dif_1': 0, 'datero_bus_2': 0, 'datero_dif_2': 0, 'datero_bus_3': 256, 'datero_dif_3': 0, 'datero_bus_4': 0, 'datero_dif_4': 0, 'datero_bus_5': 0, 'datero_dif_5': 0}
         client = Protocol(file='codec8.json')
         binary = client.encode(data, 'status3')
-        self.assertEqual(b'\x00\x00\x00\x00\x00\x00\x00*s=EA\x00     \x00     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xb6\xd6', binary)
+        self.assertEqual(b'\x00\x00\x00\x01s=EA\x00     \x00     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xb6\xd6', binary)
         header, recv = client.decode(binary)
         self.assertEqual(data, recv)
 

@@ -1,5 +1,6 @@
 {
     "length": 8,
+    "fake_prefix": [0, 0, 0, 1],
     "crc": {"poly":  "0x18005", "init":  "0x0000", "reverse": true, "byte_order":  "big", "size": 4},
     "formats": {
         "login": {
