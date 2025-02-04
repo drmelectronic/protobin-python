@@ -711,3 +711,11 @@ report:
         header, recv = client.decode(binary)
         print(recv)
 
+    def test_status_teltonika(self):
+        pesquero = b'\x00\x00\x00\x01S=RA\x07IQUITOS14:05\x06LOBATO\x04\x07IGLESIA\x00f\x08\x00n\x05\x00\x96\x03\x01m\x08\x00\xb5\r\x01w\t\x00\x00o\xb4'
+        client = Protocol(file='teltonika.json', server=None)
+        header, recv = client.decode(pesquero)
+        print(recv)
+        binary = client.encode(recv, header)
+        print(binary)
+        self.assertEqual(pesquero, binary)

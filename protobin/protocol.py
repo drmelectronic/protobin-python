@@ -67,6 +67,7 @@ class Protocol:
     crc16 = None
     crc_byteorder = None
     crc_size = 2
+    fake_prefix = None
 
     def __init__(self, server: bool = None, file=None, js=None):
         self.server = server
@@ -87,6 +88,7 @@ class Protocol:
         if 'crc' in js:
             self.config_crc(js['crc'])
             self.length = js['length']
+        self.fake_prefix = js.get('fake_prefix')
         formats = js['formats']
         self.formats = {}
         for name in formats.keys():
@@ -112,22 +114,33 @@ class Protocol:
             raise InputError(f'{format_key} is not available format, these are the all availables formats {self.formats.keys()}')
         format = self.formats[format_key]
         binary = format.encode(data)
-        if format.crc and self.crc16:
+        if self.fake_prefix:
+            binary = bytes(self.fake_prefix) + binary + self.get_crc(binary)
+        elif format.crc and self.crc16:
             binary = len(binary).to_bytes(self.length, 'big', signed=False) + binary + self.get_crc(binary)
+
         return binary
 
     def get_header(self, binary):
         n = binary.find(b'=')
         if n == -1:
+            # posiciones sin =, calcular la longitud de la trama con sus primero bytes
             binary = self.check_crc(binary)
             h = binary[:1]
             binary = binary[1:]
             format = self.get_codec(h)
         else:
             if n > 4:
-                binary = self.check_crc(binary)
+                # comandos de pantalla con = o que tengan un igual más adelante por casualidad
+                if self.fake_prefix and binary[:4] == bytes(self.fake_prefix):
+                    # comandos
+                    binary = binary[4:]
+                else:
+                    # codec8
+                    binary = self.check_crc(binary)
                 n = binary.find(b'=')
                 if n > 4 or n == -1:
+                    # si el igual está adelante no es parte del comando
                     h = binary[:1]
                     binary = binary[1:]
                     format = self.get_codec(h)
@@ -141,6 +154,7 @@ class Protocol:
         if codec is None:
             format, binary = self.get_header(binary)
         else:
+            # codec 8 u otro ya se sabe el codec
             format = self.formats[codec]
             if format.crc and self.crc16:
                 binary = self.check_crc(binary)
