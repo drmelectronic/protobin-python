@@ -3,7 +3,7 @@ import datetime
 import math
 from typing import Union, List
 
-from protobin.errors import ParserError, FormatError
+from protobin.errors import DecodeError, FormatError
 
 
 # removed for python 3.8
@@ -50,7 +50,7 @@ class FieldBase:
     def ensure_length(self, binary):
         if self.bytes:
             if len(binary) < self.bytes:
-                raise ParserError(f'Binary has not enough data for {self}')
+                raise DecodeError(f'Binary has not enough data for {self}')
 
     def from_binary(self, binary):
         raise NotImplementedError()
@@ -398,7 +398,10 @@ class StringField(FieldBase):
         return f'StringField<key: {self.key}, bytes: {self.bytes}>'
 
     def from_binary(self, binary):
-        return binary.decode('utf')
+        try:
+            return binary.decode('utf')
+        except UnicodeEncodeError:
+            raise DecodeError(f"Can't decode string: {binary}")
 
     def split(self, binary):
         if self.bytes:

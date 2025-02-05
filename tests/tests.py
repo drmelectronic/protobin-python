@@ -727,3 +727,11 @@ report:
         binary = client.encode(data, 'login_status')
         print(binary)
         self.assertEqual(b'P=\x03110\x04roma\x04IO37\x19\x8f', binary)
+
+    def test_teltonika_login_urbanito(self):
+        client = Protocol(file='codec8.json', server=None)
+        data = {'company': 'urbanito', 'route': '9802'}
+        binary = client.encode(data, 'login_status')
+        print(binary)
+        self.assertEqual(b'P=\x00\x08urbanito\x049802+\xbf', binary)
+

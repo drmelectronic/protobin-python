@@ -14,7 +14,7 @@
             "crc_size": 2,
             "header": "P",
             "fields": {
-                "bus_number": {"type": "string"},
+                "padron": {"type": "string"},
                 "company": {"type": "string"},
                 "route": {"type": "string"}
             }

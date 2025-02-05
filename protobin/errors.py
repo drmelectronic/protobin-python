@@ -21,7 +21,7 @@ class InputError(BaseError):
     pass
 
 
-class ParserError(BaseError):
+class DecodeError(BaseError):
     pass
 
 
