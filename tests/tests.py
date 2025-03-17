@@ -290,6 +290,31 @@ class BasicTest(unittest.TestCase):
         with self.assertRaises(ValueError) as er:
             self.protocol.encode(data, 'unsigned')
 
+        protocol = Protocol(js={'formats': {
+            'unsigned': {
+                "header": "u",
+                "fields": {
+                    "geofence": {"bytes": 2, "type": "unsigned"},
+                    "orden": {"bytes": 1, "type": "unsigned"},
+                    "delta": {"bytes": 1, "type": "unsigned"},
+                    "origin": {"bytes": 2, "type": "unsigned"},
+                    "id": {"bytes": 0, "type": "string"}
+                }
+            }
+        }})
+        data = {
+            "id": "11",
+            "orden": 0,
+            "origin": 57,
+            "delta": 5,
+            "geofence": 200
+        }
+        binary = protocol.encode(data, 'unsigned')
+        print(binary)
+        h, recv = protocol.decode(binary)
+        print(recv)
+        self.assertEqual(data, recv)
+
     def test_id(self):
         data = {'test': 254}
         binary = self.protocol.encode(data, 'id')
@@ -635,7 +660,7 @@ report:
         data = {'status': 'E', 'direction': 'A', 'next_next_control': '', 'next_next_time': '     ', 'next_control': '', 'next_time': '     ', 'previous_control': '', 'delay': 0, 'front_control': '', 'back_control': '', 'back_back_control': '', 'datero_bus_-1': 0, 'datero_dif_-1': 0, 'datero_bus_0': 0, 'datero_dif_0': 0, 'datero_bus_1': 0, 'datero_dif_1': 0, 'datero_bus_2': 0, 'datero_dif_2': 0, 'datero_bus_3': 256, 'datero_dif_3': 0, 'datero_bus_4': 0, 'datero_dif_4': 0, 'datero_bus_5': 0, 'datero_dif_5': 0}
         client = Protocol(file='codec8.json')
         binary = client.encode(data, 'status3')
-        self.assertEqual(b's=EA\x00     \x00     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xb6\xd6', binary)
+        self.assertEqual(b's=EA\x00     \x00     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\xb6\xd6', binary)
         header, recv = client.decode(binary)
         self.assertEqual(data, recv)
 
@@ -723,7 +748,7 @@ report:
 
     def test_teltonika_login(self):
         client = Protocol(file='codec8.json', server=None)
-        data = {'bus_number': '110', 'company': 'roma', 'route': 'IO37'}
+        data = {'padron': '110', 'company': 'roma', 'route': 'IO37'}
         binary = client.encode(data, 'login_status')
         print(binary)
         self.assertEqual(b'P=\x03110\x04roma\x04IO37\x19\x8f', binary)
