@@ -139,6 +139,14 @@
                 "datero_dif_5": {"type": "unsigned", "bytes": 1}
             }
         },
+        "message": {
+            "crc": false,
+            "crc_size": 2,
+            "header": "M",
+            "fields": {
+                "text": {"type": "string"}
+            }
+        },
         "command": {
             "codec": 12,
             "fields": {

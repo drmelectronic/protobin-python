@@ -64,6 +64,16 @@
                 "id": {"type": "string"},
                 "value": {"type": "string"}
             }
+        },
+        "timestamp": {
+            "header": "#T",
+            "server": {
+                "faltantes": {"bytes": 4, "type": "unsigned"},
+                "tabla": {"bytes": 1, "type": "char"}
+            },
+            "client": {
+                "timestamp":{"bytes": 6, "decimals": 3, "type": "timestamp"}
+            }
         }
     }
 }

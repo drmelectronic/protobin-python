@@ -463,7 +463,7 @@ class TimestampField(FieldBase):
 
     def __init__(self, k, js):
         super().__init__(k, js)
-        self.bytes = 8
+        self.bytes = js.get('bytes', 6)
         self.decimals = js.get('decimals', 6)
 
     def __repr__(self):
@@ -475,7 +475,7 @@ class TimestampField(FieldBase):
         if val is None:
             return bytes([0] * 8)
         timestamp = val.timestamp() * (10 ** self.decimals)
-        return int(timestamp).to_bytes(8, 'big', signed=False)
+        return int(timestamp).to_bytes(self.bytes, 'big', signed=False)
 
     def from_binary(self, binary):
         d = int.from_bytes(binary, 'big')

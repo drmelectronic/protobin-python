@@ -134,6 +134,10 @@ class BasicTest(unittest.TestCase):
                 "header": "TS",
                 "fields": {'test': {'bytes': 8, 'type': 'timestamp'}}
             },
+            'timestamp6': {
+                "header": "T6",
+                "fields": {'test': {'bytes': 6, "decimals": 3, 'type': 'timestamp'}}
+            },
             'unsigned': {
                 "header": "u",
                 "fields": {'test': {'bytes': 3, 'type': 'unsigned'}}
@@ -340,6 +344,13 @@ class BasicTest(unittest.TestCase):
     def test_timestamp(self):
         data = {'test': datetime.datetime(2024, 9, 13, 15, 23, 51, 265981)}
         binary = self.protocol.encode(data, 'timestamp')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_timestamp6(self):
+        data = {'test': datetime.datetime(2025, 1, 24, 9, 18, 24, 896000)}
+        binary = self.protocol.encode(data, 'timestamp6')
+        print(binary)
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
@@ -760,3 +771,9 @@ report:
         print(binary)
         self.assertEqual(b'P=\x00\x08urbanito\x049802+\xbf', binary)
 
+    def test_message_teltonika(self):
+        data = {'text': 'prueba de mensaje'}
+        client = Protocol(file='teltonika.json', server=None)
+        binary = client.encode(data, 'message')
+        print(binary)
+        self.assertEqual(binary, b'M=\x11prueba de mensaje48')
