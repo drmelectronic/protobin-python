@@ -299,7 +299,7 @@ class FlagsField(FieldBase):
     def __init__(self, k, js):
         super().__init__(k, js)
         self.keys = self.key.split(',')
-        self.length = len(self.key)
+        self.length = len(self.keys)
         self.bytes = math.ceil(self.length / 8)
 
     def __repr__(self):

@@ -777,3 +777,37 @@ report:
         binary = client.encode(data, 'message')
         print(binary)
         self.assertEqual(binary, b'M=\x11prueba de mensaje48')
+
+    def test_history_geofence_ms(self):
+        codec = {
+            "formats":{
+                "history_geofence_ms": {
+                    "header": "$",
+                    "fields": {
+                        "items": {
+                            "type": "array",
+                            "array": {
+                                "id": {"bytes": 2, "type": "unsigned"},
+                                "orden" : {"bytes": 1, "type": "unsigned"},
+                                "longitud": {"bytes": 4, "type": "float", "decimals": 6},
+                                "latitud": {"bytes": 4, "type": "float", "decimals": 6},
+                                "radio": {"bytes": 2, "type": "unsigned"},
+                                "ruta": {"bytes": 1, "type": "unsigned"},
+                                "lado,control,datear,activo": {"type": "flags"},
+                                "nombre": {"bytes": 15, "type": "char"},
+                                "timestamp":{"bytes": 6, "decimals": 3, "type": "timestamp"},
+                                "type": {"bytes": 1, "type": "char"}
+                            }
+                        },
+                        "next": {"bytes": 1, "type": "char"}
+                    }
+                }
+            }
+        }
+        data = {'items': [{'id': 2, 'lado': False, 'ruta': 2, 'audio': 'HU', 'orden': 8, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'FINAL', 'control': True, 'latitud': -12.0627343, 'retorno': True, 'sagrado': False, 'longitud': -77.0153672, 'terminal': True, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 486000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 5, 'lado': False, 'ruta': 2, 'audio': 'UN', 'orden': 2, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'UNIVERITARIA', 'control': True, 'latitud': -12.0500755, 'retorno': False, 'sagrado': False, 'longitud': -77.0772618, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 518000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 6, 'lado': False, 'ruta': 2, 'audio': 'CA', 'orden': 3, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'CARCAMO', 'control': True, 'latitud': -12.0472635, 'retorno': False, 'sagrado': False, 'longitud': -77.0508689, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 528000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 7, 'lado': False, 'ruta': 2, 'audio': '2 ', 'orden': 4, 'radio': 70, 'activo': True, 'datear': True, 'nombre': '2 DE MAYO', 'control': True, 'latitud': -12.0465238, 'retorno': False, 'sagrado': False, 'longitud': -77.043466, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 536000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 8, 'lado': False, 'ruta': 2, 'audio': 'PL', 'orden': 5, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'PLAZA SAN MARTIN', 'control': True, 'latitud': -12.0511405, 'retorno': False, 'sagrado': False, 'longitud': -77.0355159, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 544000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 13, 'lado': True, 'ruta': 2, 'audio': 'AB', 'orden': 4, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'ABANCAY', 'control': True, 'latitud': -12.0547289, 'retorno': False, 'sagrado': False, 'longitud': -77.0298779, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 585000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 14, 'lado': True, 'ruta': 2, 'audio': 'PL', 'orden': 5, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'PLAZA SAN MARTIN', 'control': True, 'latitud': -12.0520219, 'retorno': False, 'sagrado': False, 'longitud': -77.0339656, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 593000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 15, 'lado': True, 'ruta': 2, 'audio': '2 ', 'orden': 6, 'radio': 70, 'activo': True, 'datear': True, 'nombre': '2 DE MAYO', 'control': True, 'latitud': -12.0467074, 'retorno': False, 'sagrado': False, 'longitud': -77.0421463, 'terminal': False, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 601000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}, {'id': 17, 'lado': True, 'ruta': 2, 'audio': 'TE', 'orden': 9, 'radio': 70, 'activo': True, 'datear': True, 'nombre': 'TERMINAL', 'control': True, 'latitud': -12.0492046, 'retorno': False, 'sagrado': False, 'longitud': -77.088908, 'terminal': True, 'timestamp': datetime.datetime(2020, 7, 27, 14, 12, 14, 618000), 'refrecuenciar': False, 'type': '+', 'tabla': 'G'}], 'next': 'P'}
+        client = Protocol(js=codec, server=None)
+        binary = client.encode(data, 'history_geofence_ms')
+        rasp = b'$=\t\x00\x02\x08\xfbh\xd6\xb9\xffG\xef\xf2\x00F\x02\x07FINAL          \x01s\x91\xb0\x90\x96+\x00\x05\x02\xfbg\xe4\xf2\xffH!d\x00F\x02\x07UNIVERITARIA   \x01s\x91\xb0\x90\xb6+\x00\x06\x03\xfbhL\x0b\xffH,`\x00F\x02\x07CARCAMO        \x01s\x91\xb0\x90\xc0+\x00\x07\x04\xfbhh\xf6\xffH/D\x00F\x02\x072 DE MAYO      \x01s\x91\xb0\x90\xc8+\x00\x08\x05\xfbh\x88\x04\xffH\x1d<\x00F\x02\x07PLAZA SAN MARTI\x01s\x91\xb0\x90\xd0+\x00\r\x04\xfbh\x9e\n\xffH\x0f7\x00F\x02\x0fABANCAY        \x01s\x91\xb0\x90\xf9+\x00\x0e\x05\xfbh\x8e\x12\xffH\x19\xca\x00F\x02\x0fPLAZA SAN MARTI\x01s\x91\xb0\x91\x01+\x00\x0f\x06\xfbhn\x1e\xffH.\x8d\x00F\x02\x0f2 DE MAYO      \x01s\x91\xb0\x91\t+\x00\x11\t\xfbg\xb7t\xffH$\xcb\x00F\x02\x0fTERMINAL       \x01s\x91\xb0\x91\x1a+P'
+        self.assertEqual(binary, rasp)
+        h, recv = client.decode(binary)
+        print(recv)
