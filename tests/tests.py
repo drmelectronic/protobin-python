@@ -112,7 +112,7 @@ class BasicTest(unittest.TestCase):
             },
             'float': {
                 "header": "f",
-                "fields": {'test': {'bytes': 4, 'decimals': 6, 'type': 'float'}}
+                "fields": {'test': {'bytes': 4, 'type': 'float', 'decimals': 6}}
             },
             'id': {
                 "header": "i",
@@ -202,6 +202,13 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_char_utf(self):
+        data = {'test': 'ñ'}
+        binary = self.protocol.encode(data, 'char')
+        print('binary', binary)
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
     def test_char2(self):
         data = {'test': 'FA', 'prueba': 'DO'}
         binary = self.protocol.encode(data, 'char2')
@@ -214,6 +221,30 @@ class BasicTest(unittest.TestCase):
         data_corregida = {'test': '  ', 'prueba': 'F '}
         self.assertEqual(data_corregida, recv)
         print(recv)
+
+    def test_char2_utf(self):
+        data = {'test': 'FA', 'prueba': 'ÑA'}
+        binary = self.protocol.encode(data, 'char2')
+        h, recv = self.protocol.decode(binary)
+        data['prueba'] = 'Ñ'
+        self.assertEqual(data, recv)
+        data = {'test': '', 'prueba': 'SÍ'}
+        binary = self.protocol.encode(data, 'char2')
+        print(binary)
+        h, recv = self.protocol.decode(binary)
+        data['prueba'] ='S '
+        data['test'] ='  '
+        self.assertEqual(data, recv)
+        print(recv)
+        data = {'test': 'ÉL', 'prueba': 'NO'}
+        binary = self.protocol.encode(data, 'char2')
+        print(binary)
+        h, recv = self.protocol.decode(binary)
+        data['test'] ='É'
+        self.assertEqual(data, recv)
+        print(recv)
+
+
 
     def test_date(self):
         data = {'test': datetime.date(2024, 9, 13)}
@@ -272,6 +303,10 @@ class BasicTest(unittest.TestCase):
 
     def test_float(self):
         data = {'test': -11.659812}
+        binary = self.protocol.encode(data, 'float')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+        data = {'test': 0}
         binary = self.protocol.encode(data, 'float')
         print(binary)
         h, recv = self.protocol.decode(binary)
@@ -339,6 +374,11 @@ class BasicTest(unittest.TestCase):
         data = {'test': 'otro texto de prueba más largo'}
         binary = self.protocol.encode(data, 'string')
         h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+        data = {'test': 'ñandú'}
+        binary = self.protocol.encode(data, 'string')
+        h, recv = self.protocol.decode(binary)
+        print('binary', binary)
         self.assertEqual(data, recv)
 
     def test_timestamp(self):
