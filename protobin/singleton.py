@@ -13,6 +13,5 @@ class ProtobinLoader(object):
     def get(self, path, server):
         key = f'{path}|{server}'
         if key not in self.protocols:
-            print('load protocol', path, server)
             self.protocols[key] = Protocol(file=path, server=server)
         return self.protocols[key]
