@@ -121,7 +121,11 @@ class ArrayField(FieldBase):
             data = {}
             for f in self.fields:
                 val, binary = f.decode(binary)
-                data[f.key] = val
+                if f.keys:
+                    for k, v in val.items():
+                        data[k] = v
+                else:
+                    data[f.key] = val
             lista.append(data)
         return lista, binary
 

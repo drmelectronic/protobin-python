@@ -851,3 +851,46 @@ report:
         self.assertEqual(binary, rasp)
         h, recv = client.decode(binary)
         print(recv)
+
+    def test_flag_array(self):
+        codec = {
+            "formats":{
+                "flag_array": {
+                    "header": "F",
+                    "fields": {
+                        "id": {"bytes": 2, "type": "unsigned"},
+                        "lado,control,datear,activo": {"type": "flags"}
+                    }
+                }
+            }
+        }
+        data = {'lado': False, 'activo': True, 'datear': True, 'control': True, 'id': 1}
+        client = Protocol(js=codec, server=None)
+        binary = client.encode(data, 'flag_array')
+        h, recv = client.decode(binary)
+        self.assertEqual(data, recv)
+        codec = {
+            "formats":{
+                "flag_array": {
+                    "header": "F",
+                    "fields": {
+                        "items": {
+                            "type": "array",
+                            "array": {
+                                "id": {"bytes": 2, "type": "unsigned"},
+                                "lado,control,datear,activo": {"type": "flags"}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        data = {'items': [
+            {'lado': False, 'activo': True, 'datear': True, 'control': True, 'id': 1},
+            {'lado': False, 'activo': True, 'datear': False, 'control': True, 'id': 2},
+            {'lado': False, 'activo': True, 'datear': False, 'control': False, 'id': 3}
+            ]}
+        client = Protocol(js=codec, server=None)
+        binary = client.encode(data, 'flag_array')
+        h, recv = client.decode(binary)
+        self.assertEqual(data, recv)
