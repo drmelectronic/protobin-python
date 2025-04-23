@@ -218,7 +218,7 @@ class CharField(FieldBase):
 
     def to_binary(self, val):
         if val is None:
-            return bytes([0])
+            val = ''
         encoded = val[:self.bytes].encode('utf')
         if self.bytes == 1 and len(encoded) > 1:
             raise ValueError(f'{self} of one byte is possible to encode a utf-8 character')

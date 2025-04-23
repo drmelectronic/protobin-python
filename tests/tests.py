@@ -202,6 +202,12 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_char_none(self):
+        data = {'test': None}
+        binary = self.protocol.encode(data, 'char')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual({'test': ' '}, recv)
+
     def test_char_utf(self):
         data = {'test': 'ñ'}
         binary = self.protocol.encode(data, 'char')

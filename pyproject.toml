@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "protobin"
-version = "0.0.44"
+version = "0.0.45"
 authors = [
     { name="Daniel Robles", email="drm.electronic@gmail.com" },
 ]
