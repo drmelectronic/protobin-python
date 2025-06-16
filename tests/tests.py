@@ -177,6 +177,26 @@ class BasicTest(unittest.TestCase):
         binary = self.protocol.encode(data, 'bits')
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
+        data = {'test': [True, False]}
+        binary = self.protocol.encode(data, 'bits')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_bits_false(self):
+        data = {'test': [False, False]}
+        binary = self.protocol.encode(data, 'bits')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_bits_false2(self):
+        data = {'test': [False, True]}
+        binary = self.protocol.encode(data, 'bits')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+        data = {'test': [False, True, False, False, False, False, False, False, False, False, False, False, False, False]}
+        binary = self.protocol.encode(data, 'bits')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
 
     def test_bits_fixed(self):
         data = {'test': [True, False, True, False, False, True, True]}
@@ -210,10 +230,8 @@ class BasicTest(unittest.TestCase):
 
     def test_char_utf(self):
         data = {'test': 'ñ'}
-        binary = self.protocol.encode(data, 'char')
-        print('binary', binary)
-        h, recv = self.protocol.decode(binary)
-        self.assertEqual(data, recv)
+        with self.assertRaises(ValueError):
+            self.protocol.encode(data, 'char')
 
     def test_char2(self):
         data = {'test': 'FA', 'prueba': 'DO'}

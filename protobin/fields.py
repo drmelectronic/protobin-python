@@ -159,11 +159,13 @@ class BitsField(FieldBase):
             return b'\x00'
         binary = b''
         if len(val) % 8:
-            bits = '0' * (8 - (len(val) % 8))
+            final = '0' * (8 - (len(val) % 8))
         else:
-            bits = ''
+            final = ''
+        bits = ''
         for b in val:
             bits += '1' if b else '0'
+        bits += final
         bts = int(len(bits) / 8)
         if not self.length:
             binary += len(val).to_bytes(1, 'big', signed=False)
@@ -173,10 +175,12 @@ class BitsField(FieldBase):
     def from_binary_bits(self, binary, length):
         numero = int.from_bytes(binary, 'big', signed=False)
         bits = bin(numero)[2:]
-        val = [False] * 8
-        for b in bits:
-            val.append(b == '1')
-        val = val[-length:]
+        max_length = (length // 8) * 8 + (8 if (length % 8) else 0)
+        if len(bits) < max_length:
+            bits = '0' * (max_length - len(bits)) + bits
+        val = []
+        for i in range(length):
+            val.append(bits[i] == '1')
         return val
 
 
