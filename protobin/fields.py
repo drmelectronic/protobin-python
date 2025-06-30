@@ -130,6 +130,27 @@ class ArrayField(FieldBase):
         return lista, binary
 
 
+
+class BinaryField(FieldBase):
+
+    def __init__(self, k, js):
+        super().__init__(k, js)
+        self.length_size = js.get('length_size', 1)
+
+    def __repr__(self):
+        return f'BinaryField<key: {self.key}, bytes: {self.bytes}>'
+
+    def from_binary(self, binary):
+        return binary
+
+    def split(self, binary):
+        bytes = int.from_bytes(binary[:self.length_size], 'big', signed=False)
+        return binary[self.length_size:bytes + self.length_size], binary[bytes + self.length_size:]
+
+    def to_binary(self, val):
+        return len(val).to_bytes(self.length_size, 'big') + val
+
+
 class BitsField(FieldBase):
     length: int
 
@@ -525,6 +546,7 @@ class UnsignedField(FieldBase):
 
 FIELD_MAP = {
     'array': ArrayField,
+    'binary': BinaryField,
     'bits': BitsField,
     'bool': BoolField,
     'char': CharField,

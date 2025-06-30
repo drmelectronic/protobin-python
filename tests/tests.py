@@ -83,6 +83,10 @@ class BasicTest(unittest.TestCase):
                 "header": "b",
                 "fields": {'test': {'type': 'bits', 'length': 7}}
             },
+            'binary': {
+                "header": "bin",
+                "fields": {'test': {'type': 'binary'}}
+            },
             'bool': {
                 "header": "BO",
                 "fields": {'test': {'bytes': 1, 'type': 'bool'}}
@@ -180,6 +184,45 @@ class BasicTest(unittest.TestCase):
         data = {'test': [True, False]}
         binary = self.protocol.encode(data, 'bits')
         h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_binary(self):
+        data = {'test': b'S=RA\x05'}
+        binary = self.protocol.encode(data, 'binary')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+
+    def test_command_binary(self):
+        data = {'test': None}
+        with self.assertRaises(ValueError) as er:
+            self.protocol.encode(data, 'unsigned')
+
+        protocol = Protocol(js={
+            "length": 8,
+            "fake_prefix": True,
+            "crc": {"poly":  "0x18005", "init":  "0x0000", "reverse": True, "byte_order":  "big", "size":  4},
+            'formats': {
+                "command": {
+                    "codec": 12,
+                    "fields": {
+                        "#commands1": {"bytes": 1, "type": "unsigned"},
+                        "type": {"bytes": 1, "type": "unsigned"},
+                        "command": {"length_size": 4, "type": "binary"},
+                        "#commands2": {"bytes": 1, "type": "unsigned"}
+                    }
+                }
+            }})
+        binary = b'S=RA\x05CERES07:42\x08HUACHIPA2\nPZA VITART\x00>\n\x00\x07\x01\x00\x041\x00&\r\x00\x00\x00\x00\x00\x00(\xc4'
+        data = {
+            '#commands1': 1,
+            'type': 5,
+            'command': binary,
+            '#commands2': 1,
+        }
+        binary = protocol.encode(data, 'command')
+        print(binary)
+        h, recv = protocol.decode(binary)
+        print(recv)
         self.assertEqual(data, recv)
 
     def test_bits_false(self):
