@@ -20,6 +20,39 @@
                 "schedule": {"type": "time"}
             }
         },
+        "report_alt": {
+            "header": "p",
+            "client": {
+                "positions": {
+                    "type": "array", "array": {
+                        "time": {"type": "datetime"},
+                        "lng": {"bytes": 4, "type": "float", "decimals": 6},
+                        "lat": {"bytes": 4, "type": "float", "decimals": 6},
+                        "speed": {"bytes": 1, "type": "unsigned"},
+                        "mark": {"bytes": 2, "type": "id"},
+                        "busstop": {"bytes": 2, "type": "id"}
+                    }
+                },
+                "trip": {"bytes": 4, "type": "id"},
+                "route": {"bytes": 1, "type": "id"},
+                "direction": {"type": "bool"},
+                "state": {"type": "char"},
+                "boletos": {
+                    "type": "array", "array": {
+                        "id": { "bytes": 2, "type": "unsigned"},
+                        "cantidad": {"bytes": 2, "type": "unsigned"}
+                    }
+                },
+                "sales": {"bytes": 3, "type": "unsigned"},
+                "events": {"type": "array", "array": {
+                    "id": {"bytes": 2, "type": "unsigned"},
+                    "value": {"bytes": 1, "type": "unsigned"}}
+                }
+            },
+            "server": {
+                "positions": {"bytes":  1, "type":  "unsigned"}
+            }
+        },
         "report": {
             "header": "PV",
             "client": {

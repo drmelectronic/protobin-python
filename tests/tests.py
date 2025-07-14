@@ -961,3 +961,12 @@ report:
         binary = client.encode(data, 'flag_array')
         h, recv = client.decode(binary)
         self.assertEqual(data, recv)
+
+
+
+    def test_report_teltonika_alt(self):
+        server = Protocol(file='demo.json', server=True)
+        binary = b'p=\x03\x14\x07%\x10YP\xfbh.\x18\xffG\xaa\x8c\x18\x00\x16\xee\xfa\x14\x07%\x10YU\xfbh/\x06\xffG\xa9\xc6\x15\x00\x16\xee\xfay\x01\xe7$\xba\x10o}\x00\xf7\xc1m\x10\xc3R\n\xffh\xbb\x00\x04\x06\xf8\x01\x01R\x00\x00\x00\x00\x00'
+        h, recv = server.decode(binary)
+        self.assertEqual(h, 'report_alt')
+        print(recv)

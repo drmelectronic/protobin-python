@@ -327,7 +327,10 @@ class DateTimeField(FieldBase):
         S, binary = self.get_nible(binary)
         if y == 0 and m == 0 and d == 0 and H == 0 and M == 0 and S == 0:
             return None
-        return datetime.datetime(2000 + y, m, d, H, M, S)
+        try:
+            return datetime.datetime(2000 + y, m, d, H, M, S)
+        except:
+            return None
 
 
 class FlagsField(FieldBase):
