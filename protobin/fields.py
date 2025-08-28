@@ -505,7 +505,12 @@ class TimestampField(FieldBase):
     def __init__(self, k, js):
         super().__init__(k, js)
         self.bytes = js.get('bytes', 6)
-        self.decimals = js.get('decimals', 6)
+        if self.bytes == 6:
+            self.decimals = 3
+        elif self.bytes == 8:
+            self.decimals = 6
+        else:
+            raise ValueError(f'Error in field TimestampField<{self.key}>, bytes must be 6 or 8 but "{self.bytes}" is received')
 
     def __repr__(self):
         return f'TimestampField<key: {self.key}>'

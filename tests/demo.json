@@ -79,6 +79,30 @@
                 "positions": {"bytes": 1, "type": "unsigned"}
             }
         },
+
+        "salida": {
+            "header": "S",
+            "client": {
+                "salida": {"bytes": 4, "type": "unsigned"}
+            },
+            "server": {
+                "id": {"bytes": 4, "type": "id"},
+                "ruta": {"bytes": 1, "type": "id"},
+                "lado": {"bytes": 1, "type": "bool"},
+                "inicio" : {"bytes": 6, "type": "datetime"},
+                "estado" : { "bytes": 1, "type": "char"},
+                "frecuencia" : { "bytes": 1, "type": "unsigned"},
+                "conductor" : { "bytes": 4, "type": "id"},
+                "geocerca" : { "bytes": 2, "type": "id"},
+                "marcados": {"bytes": 0, "type": "bits"},
+                "controles": {"type": "array", "array": {
+                    "geocerca": {"bytes": 2, "type": "unsigned"},
+                    "tiempo": {"bytes": 2, "type": "signed"},
+                    "volada": {"bytes": 2, "type": "signed"}
+                    }
+                }
+            }
+        },
         "comando": {
             "header": "$",
             "client": {

@@ -140,7 +140,11 @@ class BasicTest(unittest.TestCase):
             },
             'timestamp6': {
                 "header": "T6",
-                "fields": {'test': {'bytes': 6, "decimals": 3, 'type': 'timestamp'}}
+                "fields": {'test': {'bytes': 6, 'type': 'timestamp'}}
+            },
+            'timestamp_default': {
+                "header": "TD",
+                "fields": {'test': {'type': 'timestamp'}}
             },
             'unsigned': {
                 "header": "u",
@@ -182,6 +186,10 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
         data = {'test': [True, False]}
+        binary = self.protocol.encode(data, 'bits')
+        h, recv = self.protocol.decode(binary)
+        self.assertEqual(data, recv)
+        data = {'test': [True, True, True, True, True, True, True, True, True, True, True, True, True, True, False, False, False, False]}
         binary = self.protocol.encode(data, 'bits')
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
@@ -451,6 +459,7 @@ class BasicTest(unittest.TestCase):
     def test_timestamp(self):
         data = {'test': datetime.datetime(2024, 9, 13, 15, 23, 51, 265981)}
         binary = self.protocol.encode(data, 'timestamp')
+        print(binary)
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
@@ -467,6 +476,14 @@ class BasicTest(unittest.TestCase):
         h, recv = self.protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_timestamp_default(self):
+        data = {'test': datetime.datetime.now()}
+        print(data)
+        binary = self.protocol.encode(data, 'timestamp_default')
+        print(binary)
+        h, recv = self.protocol.decode(binary)
+        print(recv)
+        self.assertEqual(data['test'].replace(microsecond=(data['test'].microsecond // 1000) * 1000), recv['test'])
 
 class AdvancedTest(unittest.TestCase):
 
@@ -970,3 +987,15 @@ report:
         h, recv = server.decode(binary)
         self.assertEqual(h, 'report_alt')
         print(recv)
+
+    def test_salida(self):
+        server = Protocol(file='demo.json', server=True)
+        client = Protocol(file='demo.json', server=False)
+        data = {'id': 52723, 'ruta': 1, 'lado': True, 'inicio': datetime.datetime(2025, 7, 22, 16, 40), 'estado': 'R', 'frecuencia': 6, 'conductor': 36, 'geocerca': 14, 'marcados': [True, True, True, True, True, True, True, True, True, True, True, True, True, True, False, False, False, False], 'controles': [{'geocerca': 3, 'tiempo': 0, 'volada': -10}, {'geocerca': 11, 'tiempo': 3, 'volada': -11}, {'geocerca': 28, 'tiempo': 3, 'volada': -4}, {'geocerca': 29, 'tiempo': 6, 'volada': -2}, {'geocerca': 43, 'tiempo': 0, 'volada': -2}, {'geocerca': 30, 'tiempo': 3, 'volada': 2}, {'geocerca': 12, 'tiempo': 3, 'volada': 2}, {'geocerca': 31, 'tiempo': 8, 'volada': 2}, {'geocerca': 32, 'tiempo': 2, 'volada': 3}, {'geocerca': 13, 'tiempo': 2, 'volada': 3}, {'geocerca': 33, 'tiempo': 2, 'volada': 6}, {'geocerca': 34, 'tiempo': 6, 'volada': 4}, {'geocerca': 35, 'tiempo': 4, 'volada': 4}, {'geocerca': 14, 'tiempo': 6, 'volada': 3}, {'geocerca': 36, 'tiempo': 11, 'volada': 0}, {'geocerca': 37, 'tiempo': 11, 'volada': 0}, {'geocerca': 38, 'tiempo': 11, 'volada': 0}, {'geocerca': 4, 'tiempo': 11, 'volada': 0}]}
+        binary = server.encode(data, 'salida')
+        print(binary)
+        self.assertEqual(b'S=\x00\x00\xcd\xf3\x01\x01"\x07%\x16@\x00R\x06\x00\x00\x00$\x00\x0e\x12\xff\xfc\x00\x12\x00\x03\x00\x00\xff\xf6\x00\x0b\x00\x03\xff\xf5\x00\x1c\x00\x03\xff\xfc\x00\x1d\x00\x06\xff\xfe\x00+\x00\x00\xff\xfe\x00\x1e\x00\x03\x00\x02\x00\x0c\x00\x03\x00\x02\x00\x1f\x00\x08\x00\x02\x00 \x00\x02\x00\x03\x00\r\x00\x02\x00\x03\x00!\x00\x02\x00\x06\x00"\x00\x06\x00\x04\x00#\x00\x04\x00\x04\x00\x0e\x00\x06\x00\x03\x00$\x00\x0b\x00\x00\x00%\x00\x0b\x00\x00\x00&\x00\x0b\x00\x00\x00\x04\x00\x0b\x00\x00', binary)
+        h, recv = client.decode(binary)
+        print(recv)
+        self.assertEqual(h, 'salida')
+        self.assertEqual(recv, data)
