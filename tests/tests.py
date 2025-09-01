@@ -512,6 +512,19 @@ class AdvancedTest(unittest.TestCase):
         h, recv = protocol.decode(binary)
         self.assertEqual(data, recv)
 
+    def test_decode_login_client(self):
+        client = Protocol(file='demo.json', server=False)
+        server = Protocol(file='demo.json', server=True)
+        binary = b'LI=\x03123\x0810707788\x00\x03\x00\x01'
+        name, recv = server.decode(binary)
+        print(name, recv)
+        binary = b'V=\x01\x00\x00\x01@\x1868b5aeac6fe42cc2f509f589'
+        name, recv = client.decode(binary)
+        print(name, recv)
+        binary = b'LI=\x00\x10Acceso permitido\x1eSe ha creado una nueva sesi\xc3\xb3n\x01\x00\x00\x02\x94\x00\x12\x04ID18\n\x03\x00\x01\t%\t)\x01'
+        name, recv = client.decode(binary)
+        print(name, recv)
+
     def test_new_yaml(self):
         ym = yaml.full_load("""
 login:
@@ -642,6 +655,17 @@ report:
     def test_login_binary(self):
         client = Protocol(file='demo.json', server=False)
         binary = b'T=\x00\n\x00\x03\x03\x00\x00\x00T\x00\x00\x0b\x8a\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        header, recv = client.decode(binary)
+        self.assertEqual(header, 'login')
+        print('recv', recv)
+
+    def test_login_binary_crc(self):
+        client = Protocol(file='demo.json', server=True)
+        binary = b'\x00\x13T=\x1000000000d4a31550\xfcy'
+        header, recv = client.decode(binary)
+        self.assertEqual(header, 'login')
+        print('recv', recv)
+        binary = b'T=\x1000000000d4a31550'
         header, recv = client.decode(binary)
         self.assertEqual(header, 'login')
         print('recv', recv)

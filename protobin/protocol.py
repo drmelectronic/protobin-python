@@ -123,6 +123,8 @@ class Protocol:
         return binary
 
     def get_header(self, binary):
+        if binary[0] == 0:
+            binary = self.check_crc(binary)
         n = binary.find(b'=')
         if n == -1:
             # posiciones sin =, calcular la longitud de la trama con sus primero bytes
@@ -168,6 +170,7 @@ class Protocol:
         length = int.from_bytes(binary[:self.length], 'big', signed=False)
         clean_binary = binary[self.length:length + self.length]
         crc = binary[length + self.length: length + self.length + self.crc_size]
+        print('length', binary[:self.length], 'binary', clean_binary, 'crc', crc)
         crc_value = int.from_bytes(crc, self.crc_byteorder, signed=False)
         if not crc:
             raise CRCError(f'There is no CRC')

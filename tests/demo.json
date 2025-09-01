@@ -1,4 +1,7 @@
 {
+    "length": 2,
+    "fake_prefix": true,
+    "crc": {"poly": "0x18005", "init": "0x0000", "reverse": true, "byte_order": "big", "size": 2},
     "formats": {
         "login": {
             "header": "T",
@@ -130,6 +133,89 @@
             },
             "client": {
                 "timestamp":{"bytes": 6, "decimals": 3, "type": "timestamp"}
+            }
+        },
+        "driver_login": {
+            "header": "LI",
+            "client": {
+                "key": {"type": "string"},
+                "dni": {"type": "string"},
+                "direction": {"bytes": 1, "type": "bool"},
+                "route": {"bytes": 1, "type": "unsigned"},
+                "vehicle": {"bytes": 2, "type": "unsigned"}
+            },
+            "server": {
+                "error": {"type": "bool"},
+                "title": {"type": "string"},
+                "message": {"type": "string"},
+                "sessions": {"type": "array", "array": {
+                    "id": {"bytes": 4, "type": "id"},
+                    "driver_id": {"bytes": 2, "type": "id"},
+                    "driver_code": {"type": "string"},
+                    "activo,castigado,conductor,vencido": {"type": "flags"},
+                    "route": {"bytes": 1, "type": "unsigned"},
+                    "direction": {"type": "bool"},
+                    "start_time": {"bytes": 6, "type": "datetime"}
+                }}
+
+            }
+        },
+        "driver_logout": {
+            "header": "LO",
+            "client": {
+                "session": {"bytes": 4, "type": "unsigned"},
+                "vehicle": {"bytes": 2, "type": "unsigned"},
+                "end_time": {"bytes": 6, "type": "datetime"},
+                "production": {"bytes": 4, "type": "unsigned"},
+                "first": {"bytes": 4, "type": "unsigned"},
+                "last": {"bytes": 4, "type": "unsigned"},
+                "resume": {"type":"array", "array": {
+                    "fare": {"bytes":2, "type": "unsigned"},
+                    "start": {"bytes": 2, "type":  "unsigned"},
+                    "end": {"bytes": 2, "type":  "unsigned"},
+                    "deleted": {"type": "array", "array": {
+                        "number": {"bytes":4, "type": "unsigned"}
+                    }},
+                    "cash": {"bytes":2, "type": "unsigned"},
+                    "turuta": {"bytes":2, "type": "unsigned"},
+                    "niubiz": {"bytes":2, "type": "unsigned"},
+                    "tutarjeta": {"bytes":2, "type": "unsigned"}
+                }}
+            },
+            "server": {
+                "error": {"type": "bool"},
+                "title": {"type": "string"},
+                "message": {"type": "string"},
+                "id": {"bytes": 4, "type": "unsigned"}
+            }
+        },
+
+        "tickets": {
+            "header": "V",
+            "client": {
+                "tickets": {"type":  "array", "array":  {
+                    "fare": {"bytes": 2, "type": "id"},
+                    "driver": {"bytes": 2, "type": "id"},
+                    "correlative": {"bytes": 4, "type": "unsigned"},
+                    "day": {"bytes": 3, "type": "date"},
+                    "busstop_end": {"bytes": 2, "type": "id"},
+                    "time": {"bytes": 6, "type": "datetime"},
+                    "busstop_start": {"bytes": 4, "type": "id"},
+                    "inspector": {"bytes": 2, "type": "id"},
+                    "payment_method": {"bytes": 1, "type": "unsigned"},
+                    "number": {"bytes": 4, "type": "unsigned"},
+                    "price": {"bytes": 2, "type": "unsigned"},
+                    "route": {"bytes": 1, "type": "id"},
+                    "session": {"bytes": 4, "type": "id"},
+                    "vehicle": {"bytes": 2, "type": "id"},
+                    "card": {"type": "string"}
+                }}
+            },
+            "server": {
+                "tickets": {"type":  "array", "array":  {
+                    "correlative": {"bytes": 4, "type": "unsigned"},
+                    "id": {"type": "string"}
+                }}
             }
         }
     }
