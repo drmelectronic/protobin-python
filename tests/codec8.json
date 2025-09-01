@@ -23,7 +23,7 @@
             "codec": 8,
             "fields": {
                 "positions": {"type": "array", "array": {
-                    "time": {"type": "timestamp", "decimals": 3},
+                    "time": {"type": "timestamp", "decimals": 3, "bytes": 8},
                     "priority": {"type": "unsigned", "bytes": 1},
                     "lng": {"type": "float", "bytes": 4, "decimals":  7},
                     "lat": {"type": "float", "bytes": 4, "decimals":  7},

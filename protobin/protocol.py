@@ -128,7 +128,7 @@ class Protocol:
         n = binary.find(b'=')
         if n == -1:
             # posiciones sin =, calcular la longitud de la trama con sus primero bytes
-            binary = self.check_crc(binary)
+            # binary = self.check_crc(binary)
             h = binary[:1]
             binary = binary[1:]
             format = self.get_codec(h)
@@ -140,7 +140,7 @@ class Protocol:
                 #     binary = binary[4:]
                 # else:
                 #     # codec8
-                binary = self.check_crc(binary)
+                # binary = self.check_crc(binary)
                 n = binary.find(b'=')
                 if n > 4 or n == -1:
                     # si el igual está adelante no es parte del comando

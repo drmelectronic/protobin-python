@@ -277,7 +277,7 @@ class BasicTest(unittest.TestCase):
         data = {'test': None}
         binary = self.protocol.encode(data, 'char')
         h, recv = self.protocol.decode(binary)
-        self.assertEqual({'test': ' '}, recv)
+        self.assertEqual({'test': None}, recv)
 
     def test_char_utf(self):
         data = {'test': 'ñ'}
@@ -753,7 +753,7 @@ report:
                 }
         client = Protocol(file='demo.json', server=False)
         binary = client.encode(data, 'report')
-        binary2 = b'PV=\x01\x18\x10$\x15W8\xfbh\xd6\x13\xffG\xf5Ki\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00'
+        binary2 = b'PV=\x01\x18\x10$\x15W8\xfbh\xd6\x13\xffG\xf5Ki\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\xa2\x00'
         self.assertEqual(binary, binary2)
         server = Protocol(file='demo.json', server=True)
         header, recv = server.decode(binary)
@@ -1018,7 +1018,7 @@ report:
         data = {'id': 52723, 'ruta': 1, 'lado': True, 'inicio': datetime.datetime(2025, 7, 22, 16, 40), 'estado': 'R', 'frecuencia': 6, 'conductor': 36, 'geocerca': 14, 'marcados': [True, True, True, True, True, True, True, True, True, True, True, True, True, True, False, False, False, False], 'controles': [{'geocerca': 3, 'tiempo': 0, 'volada': -10}, {'geocerca': 11, 'tiempo': 3, 'volada': -11}, {'geocerca': 28, 'tiempo': 3, 'volada': -4}, {'geocerca': 29, 'tiempo': 6, 'volada': -2}, {'geocerca': 43, 'tiempo': 0, 'volada': -2}, {'geocerca': 30, 'tiempo': 3, 'volada': 2}, {'geocerca': 12, 'tiempo': 3, 'volada': 2}, {'geocerca': 31, 'tiempo': 8, 'volada': 2}, {'geocerca': 32, 'tiempo': 2, 'volada': 3}, {'geocerca': 13, 'tiempo': 2, 'volada': 3}, {'geocerca': 33, 'tiempo': 2, 'volada': 6}, {'geocerca': 34, 'tiempo': 6, 'volada': 4}, {'geocerca': 35, 'tiempo': 4, 'volada': 4}, {'geocerca': 14, 'tiempo': 6, 'volada': 3}, {'geocerca': 36, 'tiempo': 11, 'volada': 0}, {'geocerca': 37, 'tiempo': 11, 'volada': 0}, {'geocerca': 38, 'tiempo': 11, 'volada': 0}, {'geocerca': 4, 'tiempo': 11, 'volada': 0}]}
         binary = server.encode(data, 'salida')
         print(binary)
-        self.assertEqual(b'S=\x00\x00\xcd\xf3\x01\x01"\x07%\x16@\x00R\x06\x00\x00\x00$\x00\x0e\x12\xff\xfc\x00\x12\x00\x03\x00\x00\xff\xf6\x00\x0b\x00\x03\xff\xf5\x00\x1c\x00\x03\xff\xfc\x00\x1d\x00\x06\xff\xfe\x00+\x00\x00\xff\xfe\x00\x1e\x00\x03\x00\x02\x00\x0c\x00\x03\x00\x02\x00\x1f\x00\x08\x00\x02\x00 \x00\x02\x00\x03\x00\r\x00\x02\x00\x03\x00!\x00\x02\x00\x06\x00"\x00\x06\x00\x04\x00#\x00\x04\x00\x04\x00\x0e\x00\x06\x00\x03\x00$\x00\x0b\x00\x00\x00%\x00\x0b\x00\x00\x00&\x00\x0b\x00\x00\x00\x04\x00\x0b\x00\x00', binary)
+        self.assertEqual(b'S=\x00\x00\xcd\xf3\x01\x01"\x07%\x16@\x00R\x06\x00\x00\x00$\x00\x0e\x12\xff\xfc\x00\x12\x00\x03\x00\x00\xff\xf6\x00\x0b\x00\x03\xff\xf5\x00\x1c\x00\x03\xff\xfc\x00\x1d\x00\x06\xff\xfe\x00+\x00\x00\xff\xfe\x00\x1e\x00\x03\x00\x02\x00\x0c\x00\x03\x00\x02\x00\x1f\x00\x08\x00\x02\x00 \x00\x02\x00\x03\x00\r\x00\x02\x00\x03\x00!\x00\x02\x00\x06\x00"\x00\x06\x00\x04\x00#\x00\x04\x00\x04\x00\x0e\x00\x06\x00\x03\x00$\x00\x0b\x00\x00\x00%\x00\x0b\x00\x00\x00&\x00\x0b\x00\x00\x00\x04\x00\x0b\x00\x00\x9e\xce', binary)
         h, recv = client.decode(binary)
         print(recv)
         self.assertEqual(h, 'salida')

@@ -243,7 +243,7 @@ class CharField(FieldBase):
 
     def to_binary(self, val):
         if val is None:
-            val = ''
+            val = '\x00' * self.bytes
         encoded = val[:self.bytes].encode('utf')
         if self.bytes == 1 and len(encoded) > 1:
             raise ValueError(f'{self} of one byte is possible to encode a utf-8 character')
@@ -506,9 +506,10 @@ class TimestampField(FieldBase):
         super().__init__(k, js)
         self.bytes = js.get('bytes', 6)
         if self.bytes == 6:
-            self.decimals = 3
+            self.decimals = js.get('decimals', 3)
         elif self.bytes == 8:
-            self.decimals = 6
+            self.decimals = js.get('decimals', 6)
+
         else:
             raise ValueError(f'Error in field TimestampField<{self.key}>, bytes must be 6 or 8 but "{self.bytes}" is received')
 
