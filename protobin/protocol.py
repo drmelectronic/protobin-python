@@ -74,6 +74,7 @@ class Protocol:
         self.server = server
         self.headers = {}
         self.codecs = {}
+        self.file = file
         if file:
             with open(file, 'r') as f:
                 if 'json' in file:
@@ -84,6 +85,9 @@ class Protocol:
                     self.load_format(js)
         else:
             self.load_format(js)
+
+    def __str__(self):
+        return self.file
 
     def load_format(self, js):
         if 'crc' in js:

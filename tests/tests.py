@@ -457,10 +457,11 @@ class BasicTest(unittest.TestCase):
         self.assertEqual(data, recv)
 
     def test_timestamp(self):
-        data = {'test': datetime.datetime(2024, 9, 13, 15, 23, 51, 265981)}
+        data = {'test': datetime.datetime(2025, 9, 2, 12, 9, 50, 732000)}
         binary = self.protocol.encode(data, 'timestamp')
         print(binary)
         h, recv = self.protocol.decode(binary)
+        print('recv', recv)
         self.assertEqual(data, recv)
 
     def test_timestamp6(self):
@@ -477,12 +478,14 @@ class BasicTest(unittest.TestCase):
         self.assertEqual(data, recv)
 
     def test_timestamp_default(self):
-        data = {'test': datetime.datetime.now()}
+        data = {'test': datetime.datetime(2025, 9, 2, 12, 9, 50, 732000)}
+        # data = {'test': datetime.datetime.now()}
         print(data)
         binary = self.protocol.encode(data, 'timestamp_default')
-        print(binary)
+        print('mio', binary)
+        binary = b'\x54\x44\x3d\x01\x99\x0A\x55\x5D\x8C'
         h, recv = self.protocol.decode(binary)
-        print(recv)
+        print('edu', recv)
         self.assertEqual(data['test'].replace(microsecond=(data['test'].microsecond // 1000) * 1000), recv['test'])
 
 class AdvancedTest(unittest.TestCase):
